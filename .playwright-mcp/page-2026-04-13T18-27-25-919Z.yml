@@ -1,0 +1,157 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - img "DivergeIT" [ref=e4]
+    - generic [ref=e5]: Pricing Calculator
+  - generic [ref=e6]:
+    - generic [ref=e7]:
+      - generic [ref=e8]:
+        - generic [ref=e9]: ● Prospect Configuration
+        - generic [ref=e10]:
+          - generic [ref=e11]:
+            - generic [ref=e12]: Support Hours
+            - generic [ref=e13]:
+              - generic [ref=e14] [cursor=pointer]: 8×5
+              - generic [ref=e15] [cursor=pointer]: 5×8
+              - generic [ref=e16] [cursor=pointer]: 24×7
+          - generic [ref=e17]:
+            - generic [ref=e18]: Users
+            - spinbutton "Users" [ref=e19]: "25"
+          - generic [ref=e20]:
+            - generic [ref=e21]: Devices
+            - spinbutton "Devices" [ref=e22]: "25"
+          - generic [ref=e23]:
+            - generic [ref=e24]: Email-Only
+            - spinbutton "Email-Only" [ref=e25]: "0"
+          - generic [ref=e26]:
+            - generic [ref=e27]: Contract Term
+            - combobox "Contract Term" [ref=e28]:
+              - option "1 Year" [selected]
+              - option "2 Years"
+              - option "3 Years"
+              - option "5 Years"
+          - generic [ref=e29]:
+            - generic [ref=e30]: Billable Seats
+            - generic [ref=e31]:
+              - generic [ref=e32]: Driven by devices
+              - generic [ref=e33]: "25"
+      - generic [ref=e34]:
+        - button "⚙️ ManageIT + SecureIT + Add-ons" [ref=e35] [cursor=pointer]:
+          - text: ⚙️ ManageIT
+          - generic [ref=e36]: + SecureIT + Add-ons
+        - button "📋 AugmentIT + Network + Pen Test" [ref=e37] [cursor=pointer]:
+          - text: 📋 AugmentIT
+          - generic [ref=e38]: + Network + Pen Test
+      - generic [ref=e40]:
+        - generic [ref=e41]:
+          - button "ManageIT Plan" [ref=e42] [cursor=pointer]
+          - button "SecureIT" [ref=e43] [cursor=pointer]
+          - button "Network" [ref=e44] [cursor=pointer]
+          - button "Pen Testing" [ref=e45] [cursor=pointer]
+        - generic [ref=e46]:
+          - generic [ref=e47]:
+            - generic [ref=e48]: ⚙️
+            - generic [ref=e49]:
+              - generic [ref=e50]: ManageIT Plan
+              - generic [ref=e51]: Fully managed IT — billed at max(users, devices) seats
+          - generic [ref=e52]:
+            - generic [ref=e53]: Plan Tier
+            - generic [ref=e54]:
+              - generic [ref=e55] [cursor=pointer]:
+                - radio "Core $155.00/seat/mo" [checked]
+                - generic [ref=e56]:
+                  - generic [ref=e57]: Core
+                  - generic [ref=e58]: $155.00/seat/mo
+              - generic [ref=e59] [cursor=pointer]:
+                - radio "Plus $210.00/seat/mo"
+                - generic [ref=e60]:
+                  - generic [ref=e61]: Plus
+                  - generic [ref=e62]: $210.00/seat/mo
+              - generic [ref=e63] [cursor=pointer]:
+                - radio "Pro $250.00/seat/mo"
+                - generic [ref=e64]:
+                  - generic [ref=e65]: Pro
+                  - generic [ref=e66]: $250.00/seat/mo
+            - generic [ref=e67]: 25 seats × $155.00 = $3,875.00 (before discount)
+          - generic [ref=e68]:
+            - generic [ref=e69]: Email-Only Users (reminder)
+            - generic [ref=e70]: Email-only users are billed at the support-tier rate ($60/user at 24x7x365).
+    - generic [ref=e72]:
+      - generic [ref=e73]:
+        - generic [ref=e76]: Qualified Pricing
+        - generic [ref=e77]:
+          - generic [ref=e78]:
+            - generic [ref=e79]:
+              - generic [ref=e80]: Solution
+              - generic [ref=e81]: ManageIT
+            - generic [ref=e82]:
+              - generic [ref=e83]: Support Tier
+              - generic [ref=e84]: 24x7x365
+            - generic [ref=e85]:
+              - generic [ref=e86]: Billable Seats
+              - generic [ref=e87]: 25 (25 users / 25 devices)
+            - generic [ref=e88]:
+              - generic [ref=e89]: Contract Term
+              - generic [ref=e90]: 1 Year
+          - generic [ref=e91]:
+            - generic [ref=e92]:
+              - generic [ref=e93]: Base Price/User/Month
+              - generic [ref=e94]: $155.00
+            - generic [ref=e95]:
+              - generic [ref=e96]: Volume Discount
+              - generic [ref=e97]: 0.0%
+            - generic [ref=e98]:
+              - generic [ref=e99]: Discounted Price/User/Month
+              - generic [ref=e100]: $155.00
+            - generic [ref=e102]:
+              - generic [ref=e103]: ManageIT Core (25 seats)
+              - generic [ref=e104]: $3,875.00
+          - generic [ref=e106]:
+            - generic [ref=e107]: Total Monthly Cost
+            - generic [ref=e108]: $3,875.00
+          - generic [ref=e109]:
+            - generic [ref=e110]: Total Contract Value
+            - generic [ref=e111]: $46,500.00
+          - generic [ref=e112]:
+            - button "Print Quote" [ref=e113] [cursor=pointer]
+            - button "Copy" [ref=e114] [cursor=pointer]
+      - generic [ref=e115]:
+        - generic [ref=e116]: ● Volume Discount Matrix
+        - table [ref=e118]:
+          - rowgroup [ref=e119]:
+            - row "Users 1yr 2yr 3yr 5yr" [ref=e120]:
+              - columnheader "Users" [ref=e121]
+              - columnheader "1yr" [ref=e122]
+              - columnheader "2yr" [ref=e123]
+              - columnheader "3yr" [ref=e124]
+              - columnheader "5yr" [ref=e125]
+          - rowgroup [ref=e126]:
+            - row "0–25 0% 1.5% 3% 6%" [ref=e127]:
+              - cell "0–25" [ref=e128]
+              - cell "0%" [ref=e129]
+              - cell "1.5%" [ref=e130]
+              - cell "3%" [ref=e131]
+              - cell "6%" [ref=e132]
+            - row "26–50 0% 1.5% 3% 6%" [ref=e133]:
+              - cell "26–50" [ref=e134]
+              - cell "0%" [ref=e135]
+              - cell "1.5%" [ref=e136]
+              - cell "3%" [ref=e137]
+              - cell "6%" [ref=e138]
+            - row "51–100 3% 4.5% 6% 9%" [ref=e139]:
+              - cell "51–100" [ref=e140]
+              - cell "3%" [ref=e141]
+              - cell "4.5%" [ref=e142]
+              - cell "6%" [ref=e143]
+              - cell "9%" [ref=e144]
+            - row "101–250 6% 7.5% 9% 12%" [ref=e145]:
+              - cell "101–250" [ref=e146]
+              - cell "6%" [ref=e147]
+              - cell "7.5%" [ref=e148]
+              - cell "9%" [ref=e149]
+              - cell "12%" [ref=e150]
+            - row "250+ 9% 10.5% 12% 15%" [ref=e151]:
+              - cell "250+" [ref=e152]
+              - cell "9%" [ref=e153]
+              - cell "10.5%" [ref=e154]
+              - cell "12%" [ref=e155]
+              - cell "15%" [ref=e156]

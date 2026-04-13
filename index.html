@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DivergeIT® Pricing Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green:       #009344;
+      --green-dark:  #336633;
+      --green-light: #e6f5ec;
+      --green-mid:   #c8e6d4;
+      --navy:        #0d1b2a;
+      --navy-2:      #112236;
+      --navy-3:      #16304a;
+      --teal-accent: #00b894;
+      --grey:        #616365;
+      --light-grey:  #EBEBEB;
+      --border:      #dde1e4;
+      --surface:     #ffffff;
+      --surface-2:   #f7f8fa;
+      --text:        #1a1a1a;
+      --text-muted:  #616365;
+      --radius:      8px;
+      --shadow:      0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md:   0 4px 12px rgba(0,0,0,0.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Open Sans', 'Segoe UI', sans-serif;
+      background: var(--light-grey);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--navy);
+      color: white;
+      padding: 0 24px;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.4);
+    }
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .logo-mark {
+      display: flex;
+      gap: 2px;
+    }
+    .logo-block {
+      width: 8px;
+      height: 28px;
+      border-radius: 1px;
+    }
+    .logo-name {
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      color: white;
+      letter-spacing: -0.3px;
+    }
+    .logo-name sup { font-size: 9px; vertical-align: super; }
+    .logo-tag {
+      font-size: 10px;
+      color: #9ca3af;
+      font-style: italic;
+      margin-top: 1px;
+    }
+    .header-pill {
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--green);
+      border: 1px solid rgba(0,147,68,0.4);
+      border-radius: 20px;
+      padding: 4px 14px;
+      letter-spacing: 0.3px;
+    }
+
+    /* ── Layout ── */
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 18px;
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 18px;
+    }
+    @media (max-width: 1000px) { .layout { grid-template-columns: 1fr; } }
+
+    /* ── Config Bar ── */
+    .config-bar {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      border-top: 3px solid var(--green);
+      padding: 16px 20px;
+      margin-bottom: 14px;
+    }
+    .config-bar-title {
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--green);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .config-bar-title::before { content: '●'; font-size: 7px; }
+    .config-bar-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    .config-grid {
+      display: grid;
+      grid-template-columns: auto 1fr 1fr 1fr 1fr 1fr;
+      gap: 14px;
+      align-items: end;
+    }
+    @media (max-width: 860px) { .config-grid { grid-template-columns: repeat(3,1fr); } }
+    @media (max-width: 560px) { .config-grid { grid-template-columns: repeat(2,1fr); } }
+
+    .cfg-label {
+      display: block;
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 5px;
+    }
+    .cfg-hint { font-size: 10px; color: var(--text-muted); margin-top: 3px; }
+
+    /* Hours pill buttons */
+    .hours-pills { display: flex; gap: 4px; }
+    .hr-pill {
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: var(--surface-2);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s;
+      font-family: 'Montserrat', Arial, sans-serif;
+    }
+    .hr-pill:hover { border-color: var(--green); color: var(--green); }
+    .hr-pill.active { background: var(--green); border-color: var(--green); color: white; }
+
+    /* Inputs */
+    input[type="number"], select {
+      width: 100%;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-family: 'Open Sans', sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      background: var(--surface);
+      -webkit-appearance: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    input[type="number"]:focus, select:focus {
+      outline: none;
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px rgba(0,147,68,0.12);
+    }
+
+    /* Seat indicator */
+    .seat-indicator {
+      padding: 8px 10px;
+      border: 1px solid var(--green);
+      border-radius: var(--radius);
+      background: var(--green-light);
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--green-dark);
+      font-family: 'Montserrat', Arial, sans-serif;
+    }
+    .seat-indicator-label { font-size: 10px; font-weight: 600; color: var(--green); margin-bottom: 2px; }
+
+    /* Volume discount display in bar */
+    .discount-chip {
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface-2);
+    }
+    .discount-chip-val {
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--green);
+    }
+    .discount-chip-label { font-size: 10px; color: var(--text-muted); margin-top: 1px; }
+
+    /* ── Solution Switcher ── */
+    .solution-switcher {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      background: var(--navy);
+      border-radius: var(--radius) var(--radius) 0 0;
+      padding: 8px 8px 0;
+    }
+    .sol-btn {
+      padding: 10px 16px;
+      border: none;
+      background: transparent;
+      color: #9ca3af;
+      cursor: pointer;
+      border-radius: 6px 6px 0 0;
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.15s;
+    }
+    .sol-btn:hover { color: white; background: rgba(255,255,255,0.06); }
+    .sol-btn.active { background: var(--surface); color: var(--text); }
+    .sol-badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.1);
+      color: #9ca3af;
+    }
+    .sol-btn.active .sol-badge { background: var(--green-light); color: var(--green-dark); }
+
+    /* ── Card / Section tabs ── */
+    .card {
+      background: var(--surface);
+      border-radius: 0 0 var(--radius) var(--radius);
+      box-shadow: var(--shadow-md);
+    }
+    .section-tabs {
+      display: flex;
+      border-bottom: 2px solid var(--border);
+      background: var(--surface-2);
+      overflow-x: auto;
+    }
+    .sec-tab {
+      padding: 10px 18px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+    .sec-tab:hover { color: var(--text); }
+    .sec-tab.active { color: var(--green-dark); border-bottom-color: var(--green); font-weight: 700; }
+
+    .sec-content { display: none; padding: 22px; }
+    .sec-content.active { display: block; }
+    .sol-panel { display: none; }
+    .sol-panel.active { display: block; }
+
+    /* ── Form ── */
+    .field { margin-bottom: 16px; }
+    .label {
+      display: block;
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 5px;
+    }
+    .hint { font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .three-col { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+
+    /* ── Radio cards ── */
+    .radio-card { position: relative; cursor: pointer; }
+    .radio-card input { position: absolute; opacity: 0; width: 0; height: 0; }
+    .rc-label {
+      display: block;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface-2);
+      text-align: center;
+      transition: all 0.15s;
+    }
+    .radio-card input:checked + .rc-label, .rc-label:hover {
+      border-color: var(--green);
+      background: var(--green-light);
+    }
+    .rc-title { font-family: 'Montserrat', Arial, sans-serif; font-weight: 700; font-size: 13px; }
+    .rc-price { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .radio-card input:checked + .rc-label .rc-price { color: var(--green-dark); }
+
+    /* ── Toggle ── */
+    .toggle-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface-2);
+      margin-bottom: 8px;
+    }
+    .toggle-row-info { flex: 1; }
+    .toggle-row-name { font-family: 'Montserrat', Arial, sans-serif; font-weight: 700; font-size: 13px; }
+    .toggle-row-desc { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+    .sw { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
+    .sw input { opacity: 0; width: 0; height: 0; }
+    .sw-slider { position: absolute; inset: 0; background: #d1d5db; border-radius: 11px; cursor: pointer; transition: background 0.2s; }
+    .sw-slider::before { content: ''; position: absolute; width: 16px; height: 16px; left: 3px; top: 3px; background: white; border-radius: 50%; transition: transform 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.15); }
+    .sw input:checked + .sw-slider { background: var(--green); }
+    .sw input:checked + .sw-slider::before { transform: translateX(18px); }
+
+    /* ── Section heading ── */
+    .sec-heading {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 16px; padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .sec-icon {
+      width: 32px; height: 32px;
+      background: var(--green-light);
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0;
+    }
+    .sec-title { font-family: 'Montserrat', Arial, sans-serif; font-size: 14px; font-weight: 700; }
+    .sec-sub { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+
+    /* ── Info box ── */
+    .info-box {
+      background: #e8f5e9; border: 1px solid var(--green-mid);
+      border-radius: var(--radius); padding: 10px 13px;
+      font-size: 12px; color: var(--green-dark); margin-bottom: 14px;
+    }
+    .info-box b { display: block; margin-bottom: 2px; font-family: 'Montserrat', Arial, sans-serif; }
+
+    /* ── Net items ── */
+    .net-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 10px 0; border-bottom: 1px solid var(--border);
+    }
+    .net-item:last-child { border-bottom: none; }
+    .net-item-info { flex: 1; }
+    .net-item-name { font-family: 'Montserrat', Arial, sans-serif; font-weight: 700; font-size: 13px; }
+    .net-item-desc { font-size: 11px; color: var(--text-muted); }
+    .net-item-rate { font-size: 11px; color: var(--text-muted); white-space: nowrap; margin: 0 10px; }
+    .net-item-qty { width: 76px; }
+
+    /* ── Pen test cards ── */
+    .pt-option { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; margin-bottom: 8px; }
+    .pt-option input[type="radio"] { margin-top: 4px; width: auto; flex-shrink: 0; accent-color: var(--green); }
+    .pt-card {
+      flex: 1; border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 12px; background: var(--surface-2); transition: all 0.15s;
+    }
+    .pt-option input:checked ~ .pt-card { border-color: var(--green); background: var(--green-light); }
+    .pt-card-top { display: flex; justify-content: space-between; align-items: center; }
+    .pt-card-name { font-family: 'Montserrat', Arial, sans-serif; font-weight: 700; font-size: 14px; }
+    .pt-card-price { font-family: 'Montserrat', Arial, sans-serif; font-weight: 800; color: var(--green); }
+    .pt-card-meta { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+    .auto-badge { font-size: 10px; font-weight: 700; background: var(--green); color: white; padding: 1px 6px; border-radius: 10px; margin-left: 6px; font-family: 'Montserrat', Arial, sans-serif; }
+
+    /* ═══════════════════════════════════════
+       SUMMARY PANEL — Dark navy theme
+    ═══════════════════════════════════════ */
+    .summary-panel { position: sticky; top: 74px; height: fit-content; }
+    .sum-card {
+      background: var(--navy);
+      color: white;
+      border-radius: var(--radius);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    .sum-head {
+      background: var(--navy-2);
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sum-head-dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; flex-shrink: 0; }
+    .sum-head-title {
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--green);
+    }
+    .sum-body { padding: 0; }
+
+    /* Qualified pricing rows */
+    .qp-section {
+      padding: 14px 18px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .qp-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .qp-row:last-child { border-bottom: none; }
+    .qp-label {
+      font-size: 12px;
+      color: #a0aec0;
+      font-family: 'Open Sans', sans-serif;
+    }
+    .qp-val {
+      font-size: 13px;
+      font-weight: 600;
+      color: white;
+      font-family: 'Montserrat', Arial, sans-serif;
+      letter-spacing: 0.3px;
+    }
+    .qp-val.green { color: #4ade80; }
+    .qp-val.muted { color: #6b7280; font-weight: 400; font-style: italic; font-size: 12px; }
+
+    .qp-divider { height: 1px; background: rgba(255,255,255,0.08); margin: 4px 0; }
+
+    /* Total block */
+    .qp-total-block {
+      background: rgba(0, 147, 68, 0.12);
+      border: 1px solid rgba(0, 147, 68, 0.25);
+      border-radius: var(--radius);
+      padding: 14px 18px;
+      margin: 0 12px 12px;
+    }
+    .qp-total-row { display: flex; justify-content: space-between; align-items: baseline; }
+    .qp-total-label { font-size: 12px; color: #a0aec0; font-family: 'Montserrat', Arial, sans-serif; font-weight: 600; }
+    .qp-total-val {
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--teal-accent);
+      letter-spacing: -0.5px;
+    }
+    .qp-contract-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 10px 18px 14px;
+    }
+    .qp-contract-label { font-size: 12px; color: #9ca3af; }
+    .qp-contract-val { font-family: 'Montserrat', Arial, sans-serif; font-size: 14px; font-weight: 700; color: white; }
+
+    /* Action buttons */
+    .sum-actions { display: flex; gap: 8px; padding: 0 12px 14px; }
+    .btn { flex: 1; padding: 9px; border: none; border-radius: var(--radius); font-family: 'Montserrat', Arial, sans-serif; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s; letter-spacing: 0.3px; }
+    .btn-primary { background: var(--green); color: white; }
+    .btn-primary:hover { background: var(--green-dark); }
+    .btn-ghost { background: rgba(255,255,255,0.07); color: #d1d5db; border: 1px solid rgba(255,255,255,0.1); }
+    .btn-ghost:hover { background: rgba(255,255,255,0.12); color: white; }
+
+    /* ── Discount reference table ── */
+    .disc-card {
+      margin-top: 12px;
+      background: white;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+    .disc-card-head {
+      padding: 9px 14px;
+      background: var(--navy);
+      font-family: 'Montserrat', Arial, sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #9ca3af;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .disc-card-head::before { content: '●'; color: var(--green); font-size: 7px; }
+    .disc-card table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    .disc-card th { background: var(--green); color: white; font-family: 'Montserrat', Arial, sans-serif; font-weight: 700; padding: 6px 8px; text-align: center; }
+    .disc-card th:first-child { text-align: left; }
+    .disc-card td { padding: 5px 8px; text-align: center; border-bottom: 1px solid var(--light-grey); }
+    .disc-card td:first-child { text-align: left; font-weight: 600; }
+    .disc-card tr:last-child td { border-bottom: none; }
+    .disc-card tr:nth-child(even) { background: var(--surface-2); }
+    .disc-card-inner { padding: 0 0 2px; }
+    .disc-card-active-row td { color: var(--green-dark); font-weight: 700; }
+    .disc-cell-active { background: var(--green) !important; color: #003d1f !important; font-weight: 800; border-radius: 4px; }
+
+    @media (max-width: 640px) { .two-col, .three-col { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <img src="DivergeIT Logo.avif" alt="DivergeIT" style="height:36px;display:block;background:#fff;border-radius:5px;padding:3px 8px;" />
+  </div>
+  <div class="header-pill">Pricing Calculator</div>
+</header>
+
+<div class="layout">
+<div><!-- left column -->
+
+  <!-- ══ SHARED CONFIG BAR ══ -->
+  <div class="config-bar">
+    <div class="config-bar-title">Prospect Configuration</div>
+    <div class="config-grid">
+      <div>
+        <label class="cfg-label">Support Hours</label>
+        <div class="hours-pills">
+          <div class="hr-pill" id="hr-8x5x5"     onclick="setHours('8x5x5')">8×5</div>
+          <div class="hr-pill" id="hr-5x8x5"     onclick="setHours('5x8x5')">5×8</div>
+          <div class="hr-pill active" id="hr-24x7x365" onclick="setHours('24x7x365')">24×7</div>
+        </div>
+      </div>
+      <div>
+        <label class="cfg-label" for="g_users">Users</label>
+        <input type="number" id="g_users" min="0" value="25" oninput="recalc()" />
+      </div>
+      <div>
+        <label class="cfg-label" for="g_devices">Devices</label>
+        <input type="number" id="g_devices" min="0" value="25" oninput="recalc()" />
+      </div>
+      <div>
+        <label class="cfg-label" for="g_email_only">Email-Only</label>
+        <input type="number" id="g_email_only" min="0" value="0" oninput="recalc()" />
+      </div>
+      <div>
+        <label class="cfg-label" for="g_term">Contract Term</label>
+        <select id="g_term" onchange="recalc()">
+          <option value="1">1 Year</option>
+          <option value="2">2 Years</option>
+          <option value="3">3 Years</option>
+          <option value="5">5 Years</option>
+        </select>
+      </div>
+      <div>
+        <label class="cfg-label">Billable Seats</label>
+        <div class="seat-indicator">
+          <div class="seat-indicator-label" id="seat-basis-hint">MAX(users, devices)</div>
+          <div id="seat-count-display">25</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SOLUTION TABS ══ -->
+  <div class="solution-switcher">
+    <button class="sol-btn active" id="sol-btn-manageit" onclick="switchSolution('manageit')">
+      ⚙️ ManageIT
+      <span class="sol-badge">+ SecureIT + Add-ons</span>
+    </button>
+    <button class="sol-btn" id="sol-btn-augmentit" onclick="switchSolution('augmentit')">
+      📋 AugmentIT
+      <span class="sol-badge">+ Network + Pen Test</span>
+    </button>
+  </div>
+
+  <div class="card">
+
+    <!-- ══ MANAGEIT SOLUTION ══ -->
+    <div id="sol-manageit" class="sol-panel active">
+      <div class="section-tabs">
+        <button class="sec-tab active" id="tab-mi-plan"    onclick="switchSection('mi-plan', this, 'manageit')">ManageIT Plan</button>
+        <button class="sec-tab"        id="tab-mi-secure"  onclick="switchSection('mi-secure', this, 'manageit')">SecureIT</button>
+        <button class="sec-tab"        id="tab-mi-network" onclick="switchSection('mi-network', this, 'manageit')">Network</button>
+        <button class="sec-tab"        id="tab-mi-pentest" onclick="switchSection('mi-pentest', this, 'manageit')">Pen Testing</button>
+      </div>
+
+      <div id="sec-mi-plan" class="sec-content active">
+        <div class="sec-heading">
+          <div class="sec-icon">⚙️</div>
+          <div>
+            <div class="sec-title">ManageIT Plan</div>
+            <div class="sec-sub">Fully managed IT — billed at max(users, devices) seats</div>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label">Plan Tier</label>
+          <div class="three-col" id="manageit-plans"></div>
+          <div class="hint" id="mi-seat-hint" style="margin-top:8px;"></div>
+        </div>
+        <div class="field">
+          <label class="label" for="g_email_only_plan">Email-Only Users (reminder)</label>
+          <div class="info-box" id="email-only-info">Email-only users are billed separately at the support-tier rate. Set count in the config bar above.</div>
+        </div>
+      </div>
+
+      <div id="sec-mi-secure" class="sec-content">
+        <div class="sec-heading">
+          <div class="sec-icon">🔐</div>
+          <div>
+            <div class="sec-title">SecureIT</div>
+            <div class="sec-sub" id="secureit-sub">Security monitoring &amp; compliance</div>
+          </div>
+        </div>
+        <!-- Bundled notice (shown for Plus / Pro) -->
+        <div id="secureit-bundled-notice" style="display:none;" class="info-box">
+          <b id="secureit-bundled-title">SecureIT Core — Included</b>
+          <span id="secureit-bundled-desc">Bundled with your ManageIT plan at no additional cost.</span>
+        </div>
+        <!-- Plan selector (shown for Core; for Plus/Pro only shows upgrade options) -->
+        <div class="field" id="secureit-plan-field">
+          <label class="label" id="secureit-plan-label">SecureIT Plan</label>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;" id="secureit-plans"></div>
+        </div>
+        <div id="secureit-seats-block" style="display:none;">
+          <div class="info-box"><b>Seat Count</b>SecureIT upgrade is billed at the same user/device counts set in the configuration bar above.</div>
+        </div>
+      </div>
+
+      <div id="sec-mi-network" class="sec-content">
+        <div class="sec-heading"><div class="sec-icon">🌐</div><div><div class="sec-title">Network Support Add-On</div><div class="sec-sub">Per device per month</div></div></div>
+        <div class="net-item"><div class="net-item-info"><div class="net-item-name">Firewall</div><div class="net-item-desc">Monitoring, updates, and configuration changes</div></div><div class="net-item-rate">$105/device/mo</div><input type="number" class="net-item-qty" id="mi_firewall" min="0" value="0" oninput="recalc()" /></div>
+        <div class="net-item"><div class="net-item-info"><div class="net-item-name">Switch</div><div class="net-item-desc">Monitoring, updates, and configuration changes</div></div><div class="net-item-rate">$55/device/mo</div><input type="number" class="net-item-qty" id="mi_switch" min="0" value="0" oninput="recalc()" /></div>
+        <div class="net-item"><div class="net-item-info"><div class="net-item-name">Access Point (AP)</div><div class="net-item-desc">Monitoring, updates, and configuration changes</div></div><div class="net-item-rate">$25/device/mo</div><input type="number" class="net-item-qty" id="mi_ap" min="0" value="0" oninput="recalc()" /></div>
+        <div class="net-item"><div class="net-item-info"><div class="net-item-name">Workstation Patching</div><div class="net-item-desc">Automated patching and compliance</div></div><div class="net-item-rate">$15/device/mo</div><input type="number" class="net-item-qty" id="mi_workstation" min="0" value="0" oninput="recalc()" /></div>
+        <div class="net-item"><div class="net-item-info"><div class="net-item-name">Server Support &amp; Patching</div><div class="net-item-desc">Proactive server management</div></div><div class="net-item-rate">$210/device/mo</div><input type="number" class="net-item-qty" id="mi_server" min="0" value="0" oninput="recalc()" /></div>
+      </div>
+
+      <div id="sec-mi-pentest" class="sec-content">
+        <div class="sec-heading"><div class="sec-icon">🛡️</div><div><div class="sec-title">Pen Testing Add-On</div><div class="sec-sub">Annual subscription — tier auto-selected by user count</div></div></div>
+        <div class="field"><div class="toggle-row"><div class="toggle-row-info"><div class="toggle-row-name">Penetration Testing Subscription</div><div class="toggle-row-desc">Annual subscription + one-time $500 onboarding fee</div></div><label class="sw"><input type="checkbox" id="mi_pentest_enabled" onchange="recalc()" /><span class="sw-slider"></span></label></div></div>
+        <div id="mi-pentest-options" style="display:none;">
+          <div class="field"><label class="label">Plan Size</label>
+            <label class="pt-option"><input type="radio" name="mi_pt_size" value="small" onchange="recalc()" /><div class="pt-card"><div class="pt-card-top"><span class="pt-card-name">Small <span id="mi-pt-auto-small" class="auto-badge" style="display:none;">Auto</span></span><span class="pt-card-price">$950/mo</span></div><div class="pt-card-meta">1–21 users · ARR $11,400 · Margin 66.1%</div></div></label>
+            <label class="pt-option"><input type="radio" name="mi_pt_size" value="large" onchange="recalc()" /><div class="pt-card"><div class="pt-card-top"><span class="pt-card-name">Large <span id="mi-pt-auto-large" class="auto-badge" style="display:none;">Auto</span></span><span class="pt-card-price">$1,400/mo</span></div><div class="pt-card-meta">22–46 users · ARR $16,800 · Margin 60.6%</div></div></label>
+            <label class="pt-option"><input type="radio" name="mi_pt_size" value="max" onchange="recalc()" /><div class="pt-card"><div class="pt-card-top"><span class="pt-card-name">Max <span id="mi-pt-auto-max" class="auto-badge" style="display:none;">Auto</span></span><span class="pt-card-price">$1,900/mo</span></div><div class="pt-card-meta">47+ users · ARR $22,800 · Margin 60.4%</div></div></label>
+          </div>
+        </div>
+      </div>
+    </div><!-- /sol-manageit -->
+
+    <!-- ══ AUGMENTIT SOLUTION ══ -->
+    <div id="sol-augmentit" class="sol-panel">
+      <div class="section-tabs">
+        <button class="sec-tab active" onclick="switchSection('aug-tickets', this, 'augmentit')">AugmentIT</button>
+        <button class="sec-tab" onclick="switchSection('aug-secureit', this, 'augmentit')">SecureIT</button>
+        <button class="sec-tab" onclick="switchSection('aug-network', this, 'augmentit')">Network</button>
+        <button class="sec-tab" onclick="switchSection('aug-pentest', this, 'augmentit')">Pen Testing</button>
+      </div>
+
+      <div id="sec-aug-tickets" class="sec-content active">
+        <div class="sec-heading"><div class="sec-icon">📋</div><div><div class="sec-title">AugmentIT Configuration</div><div class="sec-sub">Per-ticket pricing — no security plans included</div></div></div>
+        <div class="info-box" id="aug-rate-info"><b>Rate at current support tier</b><span id="aug-rate-detail">$65/ticket at 24×7×365</span></div>
+        <div class="field"><label class="label" for="aug_tickets">Estimated Tickets / Month</label><input type="number" id="aug_tickets" min="0" value="10" oninput="recalc()" style="max-width:200px;" /><div class="hint">Users, term, and discount set in config bar above</div></div>
+      </div>
+
+      <div id="sec-aug-secureit" class="sec-content">
+        <div class="sec-heading"><div class="sec-icon">🔒</div><div><div class="sec-title">SecureIT Add-On</div><div class="sec-sub">Security plans billed per seat (max of users/devices)</div></div></div>
+        <div class="field">
+          <label class="label" id="aug-secureit-plan-label">SecureIT Plan</label>
+          <div id="aug-secureit-plans" class="radio-card-group"></div>
+        </div>
+      </div>
+
+      <div id="sec-aug-network" class="sec-content">
+        <div class="sec-heading"><div class="sec-icon">🌐</div><div><div class="sec-title">Network Support</div><div class="sec-sub">Per device per month</div></div></div>
+        <div class="net-item"><div class="net-item-info"><div class="net-item-name">Firewall</div><div class="net-item-desc">Monitoring, updates, and configuration changes</div></div><div class="net-item-rate">$105/device/mo</div><input type="number" class="net-item-qty" id="aug_firewall" min="0" value="0" oninput="recalc()" /></div>
+        <div class="net-item"><div class="net-item-info"><div class="net-item-name">Switch</div><div class="net-item-desc">Monitoring, updates, and configuration changes</div></div><div class="net-item-rate">$55/device/mo</div><input type="number" class="net-item-qty" id="aug_switch" min="0" value="0" oninput="recalc()" /></div>
+        <div class="net-item"><div class="net-item-info"><div class="net-item-name">Access Point (AP)</div><div class="net-item-desc">Monitoring, updates, and configuration changes</div></div><div class="net-item-rate">$25/device/mo</div><input type="number" class="net-item-qty" id="aug_ap" min="0" value="0" oninput="recalc()" /></div>
+        <div class="net-item"><div class="net-item-info"><div class="net-item-name">Workstation Patching</div><div class="net-item-desc">Automated patching and compliance</div></div><div class="net-item-rate">$15/device/mo</div><input type="number" class="net-item-qty" id="aug_workstation" min="0" value="0" oninput="recalc()" /></div>
+        <div class="net-item"><div class="net-item-info"><div class="net-item-name">Server Support &amp; Patching</div><div class="net-item-desc">Proactive server management</div></div><div class="net-item-rate">$210/device/mo</div><input type="number" class="net-item-qty" id="aug_server" min="0" value="0" oninput="recalc()" /></div>
+      </div>
+
+      <div id="sec-aug-pentest" class="sec-content">
+        <div class="sec-heading"><div class="sec-icon">🛡️</div><div><div class="sec-title">Pen Testing</div><div class="sec-sub">Annual subscription — tier auto-selected by user count</div></div></div>
+        <div class="field"><div class="toggle-row"><div class="toggle-row-info"><div class="toggle-row-name">Penetration Testing Subscription</div><div class="toggle-row-desc">Annual subscription + one-time $500 onboarding fee</div></div><label class="sw"><input type="checkbox" id="aug_pentest_enabled" onchange="recalc()" /><span class="sw-slider"></span></label></div></div>
+        <div id="aug-pentest-options" style="display:none;">
+          <div class="field"><label class="label">Plan Size</label>
+            <label class="pt-option"><input type="radio" name="aug_pt_size" value="small" onchange="recalc()" /><div class="pt-card"><div class="pt-card-top"><span class="pt-card-name">Small <span id="aug-pt-auto-small" class="auto-badge" style="display:none;">Auto</span></span><span class="pt-card-price">$950/mo</span></div><div class="pt-card-meta">1–21 users · ARR $11,400 · Margin 66.1%</div></div></label>
+            <label class="pt-option"><input type="radio" name="aug_pt_size" value="large" onchange="recalc()" /><div class="pt-card"><div class="pt-card-top"><span class="pt-card-name">Large <span id="aug-pt-auto-large" class="auto-badge" style="display:none;">Auto</span></span><span class="pt-card-price">$1,400/mo</span></div><div class="pt-card-meta">22–46 users · ARR $16,800 · Margin 60.6%</div></div></label>
+            <label class="pt-option"><input type="radio" name="aug_pt_size" value="max" onchange="recalc()" /><div class="pt-card"><div class="pt-card-top"><span class="pt-card-name">Max <span id="aug-pt-auto-max" class="auto-badge" style="display:none;">Auto</span></span><span class="pt-card-price">$1,900/mo</span></div><div class="pt-card-meta">47+ users · ARR $22,800 · Margin 60.4%</div></div></label>
+          </div>
+        </div>
+      </div>
+    </div><!-- /sol-augmentit -->
+
+  </div><!-- /.card -->
+</div><!-- /left column -->
+
+  <!-- ══ RIGHT COLUMN ══ -->
+  <div>
+    <div class="summary-panel">
+      <div class="sum-card">
+        <div class="sum-head">
+          <div class="sum-head-dot"></div>
+          <div class="sum-head-title">Qualified Pricing</div>
+        </div>
+        <div class="sum-body">
+
+          <!-- Config section -->
+          <div class="qp-section">
+            <div class="qp-row"><span class="qp-label">Solution</span><span class="qp-val" id="s-solution">ManageIT</span></div>
+            <div class="qp-row"><span class="qp-label">Support Tier</span><span class="qp-val" id="s-tier">24×7×365</span></div>
+            <div class="qp-row"><span class="qp-label">Billable Seats</span><span class="qp-val" id="s-seats">25</span></div>
+            <div class="qp-row" id="s-email-row" style="display:none;"><span class="qp-label">Email-Only Users</span><span class="qp-val" id="s-email">0</span></div>
+            <div class="qp-row"><span class="qp-label">Contract Term</span><span class="qp-val" id="s-term">1 Year</span></div>
+          </div>
+
+          <!-- ManageIT pricing breakdown -->
+          <div id="s-manage-section" class="qp-section">
+            <div class="qp-row"><span class="qp-label">Base Price/User/Month</span><span class="qp-val" id="s-base-price">$0.00</span></div>
+            <div class="qp-row"><span class="qp-label">Volume Discount</span><span class="qp-val green" id="s-vol-disc">0.0%</span></div>
+            <div class="qp-row"><span class="qp-label">Discounted Price/User/Month</span><span class="qp-val" id="s-disc-price">$0.00</span></div>
+            <div class="qp-divider"></div>
+            <div class="qp-row"><span class="qp-label" id="s-manage-main-lbl">ManageIT Monthly Total</span><span class="qp-val" id="s-manage-main">$0.00</span></div>
+            <div class="qp-row" id="s-email-line" style="display:none;"><span class="qp-label" id="s-email-line-lbl">Email-Only</span><span class="qp-val" id="s-email-line-val">$0.00</span></div>
+            <div class="qp-row" id="s-secure-line" style="display:none;"><span class="qp-label" id="s-secure-line-lbl">SecureIT Monthly Total</span><span class="qp-val" id="s-secure-line-val">$0.00</span></div>
+            <div id="s-net-lines"></div>
+            <div class="qp-row" id="s-pen-line" style="display:none;"><span class="qp-label" id="s-pen-line-lbl">Pen Testing Monthly</span><span class="qp-val" id="s-pen-line-val">$0.00</span></div>
+          </div>
+
+          <!-- AugmentIT breakdown -->
+          <div id="s-aug-section" style="display:none;" class="qp-section">
+            <div class="qp-row"><span class="qp-label">Rate/Ticket</span><span class="qp-val" id="s-aug-rate">$0.00</span></div>
+            <div class="qp-row"><span class="qp-label">Volume Discount</span><span class="qp-val green" id="s-aug-disc">0.0%</span></div>
+            <div class="qp-row"><span class="qp-label">Discounted Rate/Ticket</span><span class="qp-val" id="s-aug-disc-rate">$0.00</span></div>
+            <div class="qp-divider"></div>
+            <div class="qp-row"><span class="qp-label" id="s-aug-total-lbl">AugmentIT Monthly Total</span><span class="qp-val" id="s-aug-total">$0.00</span></div>
+            <div class="qp-row" id="s-aug-secure-line" style="display:none;"><span class="qp-label" id="s-aug-secure-lbl">SecureIT</span><span class="qp-val" id="s-aug-secure-val">$0.00</span></div>
+            <div id="s-aug-net-lines"></div>
+            <div class="qp-row" id="s-aug-pen-line" style="display:none;"><span class="qp-label">Pen Testing Monthly</span><span class="qp-val" id="s-aug-pen-val">$0.00</span></div>
+          </div>
+
+          <!-- Total -->
+          <div class="qp-total-block">
+            <div class="qp-total-row">
+              <div class="qp-total-label">Total Monthly Cost</div>
+              <div class="qp-total-val" id="s-monthly">$0.00</div>
+            </div>
+          </div>
+          <div class="qp-contract-row">
+            <span class="qp-contract-label">Total Contract Value</span>
+            <span class="qp-contract-val" id="s-annual">$0.00</span>
+          </div>
+
+          <div class="sum-actions">
+            <button class="btn btn-primary" onclick="window.print()">Print Quote</button>
+            <button class="btn btn-ghost" onclick="copyQuote()">Copy</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Discount table -->
+      <div class="disc-card">
+        <div class="disc-card-head">Volume Discount Matrix</div>
+        <div class="disc-card-inner">
+          <table>
+            <thead><tr><th>Users</th><th>1yr</th><th>2yr</th><th>3yr</th><th>5yr</th></tr></thead>
+            <tbody id="disc-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div><!-- /right col -->
+
+</div><!-- /layout -->
+
+<script>
+// ═══════════════════════════════
+//  DATA
+// ═══════════════════════════════
+const MANAGEIT = {
+  '8x5x5':    { Core:80,  Plus:135, Pro:170, EmailOnly:25 },
+  '5x8x5':    { Core:110, Plus:160, Pro:200, EmailOnly:40 },
+  '24x7x365': { Core:155, Plus:210, Pro:250, EmailOnly:60 },
+};
+const SECUREIT_RATES     = { Core:15, Plus:50, Pro:90 };
+const AUG_SECUREIT_RATES = { Plus:60, Pro:100 };
+const AUGMENTIT = { '8x5x5':26, '5x8x5':42, '24x7x365':65 };
+const NETWORK = { firewall:105, switch:55, ap:25, workstation:15, server:210 };
+const PENTEST = {
+  small: { monthly:950,  label:'Small (1–21 users)' },
+  large: { monthly:1400, label:'Large (22–46 users)' },
+  max:   { monthly:1900, label:'Max (47+ users)'     },
+};
+const DISCOUNTS = [
+  { label:'0–25',    max:25,       t:{1:0,  2:1.5, 3:3,  5:6  } },
+  { label:'26–50',   max:50,       t:{1:0,  2:1.5, 3:3,  5:6  } },
+  { label:'51–100',  max:100,      t:{1:3,  2:4.5, 3:6,  5:9  } },
+  { label:'101–250', max:250,      t:{1:6,  2:7.5, 3:9,  5:12 } },
+  { label:'250+',    max:Infinity, t:{1:9,  2:10.5,3:12, 5:15 } },
+];
+
+// ═══════════════════════════════
+//  STATE
+// ═══════════════════════════════
+let currentHours = '24x7x365';
+let activeSolution = 'manageit';
+
+// ═══════════════════════════════
+//  HELPERS
+// ═══════════════════════════════
+const $ = id => document.getElementById(id);
+const fmt = n => '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+const fmtPct = n => n.toFixed(1) + '%';
+const getNum = id => parseInt($(id).value) || 0;
+const getRadio = name => { const el = document.querySelector(`input[name="${name}"]:checked`); return el ? el.value : null; };
+const set = (id,v) => { const el=$(id); if(el) el.textContent=v; };
+const show = (id,v) => { const el=$(id); if(el) el.style.display = v?'':'none'; };
+
+function getDiscount(users, term) {
+  for (const r of DISCOUNTS) if (users <= r.max) return r.t[term] || 0;
+  return DISCOUNTS[DISCOUNTS.length-1].t[term] || 0;
+}
+
+function getDiscountRowIndex(users) {
+  for (let i = 0; i < DISCOUNTS.length; i++) if (users <= DISCOUNTS[i].max) return i;
+  return DISCOUNTS.length - 1;
+}
+
+function autoSelectPenTest(prefix, totalUsers) {
+  const tier = totalUsers <= 21 ? 'small' : totalUsers <= 46 ? 'large' : 'max';
+  document.querySelectorAll(`input[name="${prefix}_pt_size"]`).forEach(r => { if (r.value === tier) r.checked = true; });
+  ['small','large','max'].forEach(s => show(`${prefix}-pt-auto-${s}`, s === tier));
+  return tier;
+}
+
+// ═══════════════════════════════
+//  RENDER PLAN CARDS
+// ═══════════════════════════════
+// ManageIT plan → default support hours
+const PLAN_DEFAULT_HOURS = { Core: '8x5x5', Plus: '5x8x5', Pro: '24x7x365' };
+
+// ManageIT plan → bundled SecureIT tier (null = none bundled)
+const PLAN_BUNDLED_SECURE = { Core: null, Plus: 'Core', Pro: 'Plus' };
+
+function onPlanChange(plan) {
+  // Auto-select the default support hours for this plan
+  setHours(PLAN_DEFAULT_HOURS[plan]);
+  // setHours calls recalc, so no extra call needed
+}
+
+function renderManageITPlans() {
+  const p   = MANAGEIT[currentHours];
+  const sel = getRadio('manageit_plan') || 'Core';
+  $('manageit-plans').innerHTML = ['Core','Plus','Pro'].map(n => `
+    <label class="radio-card">
+      <input type="radio" name="manageit_plan" value="${n}" ${sel===n?'checked':''} onchange="onPlanChange('${n}')" />
+      <div class="rc-label">
+        <div class="rc-title">${n}</div>
+        <div class="rc-price">${fmt(p[n])}/seat/mo</div>
+      </div>
+    </label>`).join('');
+}
+
+function renderSecureITPlans(managePlan) {
+  const bundled = PLAN_BUNDLED_SECURE[managePlan]; // null, 'Core', or 'Plus'
+
+  if (bundled) {
+    // Show bundled notice
+    show('secureit-bundled-notice', true);
+    $('secureit-bundled-title').textContent =
+      `SecureIT ${bundled} — Included`;
+    $('secureit-bundled-desc').textContent =
+      `Bundled with ManageIT ${managePlan} at no additional cost.`;
+
+    // Only show upgrade options above the bundled tier, priced as delta above bundled
+    const bundledRate = SECUREIT_RATES[bundled] || 0;
+    const upgradeOpts = bundled === 'Core'
+      ? [{v:'None',label:'No Upgrade',price:null},{v:'Plus',label:'Upgrade to Plus',price:SECUREIT_RATES.Plus - bundledRate},{v:'Pro',label:'Upgrade to Pro',price:SECUREIT_RATES.Pro - bundledRate}]
+      : [{v:'None',label:'No Upgrade',price:null},{v:'Pro',label:'Upgrade to Pro',price:SECUREIT_RATES.Pro - bundledRate}];
+
+    $('secureit-plan-label').textContent = 'SecureIT Upgrade (optional)';
+    const sel = getRadio('secureit_plan') || 'None';
+    $('secureit-plans').innerHTML = upgradeOpts.map(o => `
+      <label class="radio-card">
+        <input type="radio" name="secureit_plan" value="${o.v}" ${sel===o.v?'checked':''} onchange="recalc()" />
+        <div class="rc-label">
+          <div class="rc-title">${o.label}</div>
+          <div class="rc-price">${o.price ? '+'+fmt(o.price)+'/seat' : 'Keep bundled'}</div>
+        </div>
+      </label>`).join('');
+  } else {
+    // Core plan — full selector
+    show('secureit-bundled-notice', false);
+    $('secureit-plan-label').textContent = 'SecureIT Plan';
+    const opts = [
+      {v:'None',label:'None',price:null},
+      {v:'Core',label:'Core',price:SECUREIT_RATES.Core},
+      {v:'Plus',label:'Plus',price:SECUREIT_RATES.Plus},
+      {v:'Pro', label:'Pro', price:SECUREIT_RATES.Pro},
+    ];
+    const sel = getRadio('secureit_plan') || 'None';
+    $('secureit-plans').innerHTML = opts.map(o => `
+      <label class="radio-card">
+        <input type="radio" name="secureit_plan" value="${o.v}" ${sel===o.v?'checked':''} onchange="recalc()" />
+        <div class="rc-label">
+          <div class="rc-title">${o.label}</div>
+          <div class="rc-price">${o.price ? fmt(o.price)+'/seat' : 'No add-on'}</div>
+        </div>
+      </label>`).join('');
+  }
+}
+
+function renderAugSecureIT() {
+  const opts = [
+    {v:'None', label:'None',  price:null},
+    {v:'Plus', label:'Plus',  price:AUG_SECUREIT_RATES.Plus},
+    {v:'Pro',  label:'Pro',   price:AUG_SECUREIT_RATES.Pro},
+  ];
+  const sel = getRadio('aug_secureit_plan') || 'None';
+  $('aug-secureit-plans').innerHTML = opts.map(o => `
+    <label class="radio-card">
+      <input type="radio" name="aug_secureit_plan" value="${o.v}" ${sel===o.v?'checked':''} onchange="recalc()" />
+      <div class="rc-label">
+        <div class="rc-title">${o.label}</div>
+        <div class="rc-price">${o.price ? fmt(o.price)+'/seat' : 'No add-on'}</div>
+      </div>
+    </label>`).join('');
+}
+
+function updateManageITTabs(plan) {
+  // Network tab only available for Core
+  const netTab = $('tab-mi-network');
+  const netContent = $('sec-mi-network');
+  const isCore = plan === 'Core';
+  netTab.style.display = isCore ? '' : 'none';
+  // If switching away from Core while Network tab is active, go back to Plan tab
+  if (!isCore && netContent.classList.contains('active')) {
+    $('tab-mi-plan').click();
+  }
+}
+
+function renderDiscountTable(activeRow, activeTerm) {
+  const termCols = [1, 2, 3, 5];
+  $('disc-tbody').innerHTML = DISCOUNTS.map((r, i) => `
+    <tr class="${i === activeRow ? 'disc-card-active-row' : ''}">
+      <td>${r.label}</td>
+      ${termCols.map(t => `<td class="${i === activeRow && t === activeTerm ? 'disc-cell-active' : ''}">${r.t[t]}%</td>`).join('')}
+    </tr>`).join('');
+}
+
+// ═══════════════════════════════
+//  GLOBAL VALUES
+// ═══════════════════════════════
+function getGlobal() {
+  const users     = getNum('g_users');
+  const devices   = getNum('g_devices');
+  const emailOnly = getNum('g_email_only');
+  const term      = parseInt($('g_term').value) || 1;
+  const seats     = Math.max(users, devices);       // MAX(users, devices)
+  const totalUsers = users + emailOnly;             // for discount calc
+  const discPct   = getDiscount(totalUsers, term);
+  const discRow   = getDiscountRowIndex(totalUsers);
+  const mult      = 1 - discPct / 100;
+  return { users, devices, emailOnly, term, seats, totalUsers, discPct, discRow, mult };
+}
+
+// ═══════════════════════════════
+//  NETWORK CALC
+// ═══════════════════════════════
+function calcNetwork(prefix) {
+  const fw  = getNum(prefix+'_firewall')    * NETWORK.firewall;
+  const sw  = getNum(prefix+'_switch')      * NETWORK.switch;
+  const ap  = getNum(prefix+'_ap')          * NETWORK.ap;
+  const ws  = getNum(prefix+'_workstation') * NETWORK.workstation;
+  const srv = getNum(prefix+'_server')      * NETWORK.server;
+  return {
+    items: [
+      {l:'Firewall',           q:getNum(prefix+'_firewall'),    r:NETWORK.firewall,    t:fw  },
+      {l:'Switch',             q:getNum(prefix+'_switch'),      r:NETWORK.switch,      t:sw  },
+      {l:'Access Points',      q:getNum(prefix+'_ap'),          r:NETWORK.ap,          t:ap  },
+      {l:'Workstation Patching',q:getNum(prefix+'_workstation'),r:NETWORK.workstation, t:ws  },
+      {l:'Server Support',     q:getNum(prefix+'_server'),      r:NETWORK.server,      t:srv },
+    ].filter(i => i.q > 0),
+    total: fw+sw+ap+ws+srv,
+  };
+}
+
+// ═══════════════════════════════
+//  MAIN RECALC
+// ═══════════════════════════════
+function recalc() {
+  const plan = getRadio('manageit_plan') || 'Core';
+  renderManageITPlans();
+  renderSecureITPlans(plan);
+  renderAugSecureIT();
+  updateManageITTabs(plan);
+
+  const g = getGlobal();
+  const p = MANAGEIT[currentHours];
+
+  // Update config bar
+  const driven = g.devices >= g.users ? 'Driven by devices' : 'Driven by users';
+  $('seat-count-display').textContent = g.seats;
+  $('seat-basis-hint').textContent = driven;
+  renderDiscountTable(g.discRow, g.term);
+
+  // Update ManageIT plan seat hint
+  $('mi-seat-hint').textContent =
+    `${g.seats} seats × ${fmt(p[plan])} = ${fmt(p[plan] * g.seats)} (before discount)`;
+  $('email-only-info').textContent =
+    g.emailOnly > 0
+      ? `${g.emailOnly} email-only users × ${fmt(p.EmailOnly)}/user = ${fmt(p.EmailOnly * g.emailOnly)}/mo (not discounted)`
+      : `Email-only users are billed at the support-tier rate ($${p.EmailOnly}/user at ${currentHours}).`;
+
+  if (activeSolution === 'manageit') calcManageIT(g, p);
+  else calcAugmentIT(g);
+}
+
+function calcManageIT(g, p) {
+  const plan    = getRadio('manageit_plan') || 'Core';
+  const secUpgrade = getRadio('secureit_plan') || 'None'; // 'None' or upgrade tier
+  const ptOn    = $('mi_pentest_enabled').checked;
+
+  const baseRate     = p[plan];
+  const discRate     = baseRate * g.mult;
+  const manageTotal  = discRate * g.seats;
+  const emailCost    = p.EmailOnly * g.emailOnly;  // email-only not discounted
+
+  const bundled     = PLAN_BUNDLED_SECURE[plan]; // null, 'Core', or 'Plus'
+  const bundledLabel = bundled ? `SecureIT ${bundled} (included w/ ${plan})` : null;
+
+  // SecureIT is priced per device; overage = extra users × $5 only when effective SecureIT tier is Plus or Pro
+  const effectiveSecTier = secUpgrade !== 'None' ? secUpgrade : bundled;
+  const overageUsers = (effectiveSecTier === 'Plus' || effectiveSecTier === 'Pro') ? Math.max(0, g.users - g.devices) : 0;
+  const overageCost  = overageUsers * 5;
+
+  // Upgrade cost = delta above bundled tier, billed per device
+  let secureUpgradeCost = 0;
+  const showSeats = secUpgrade !== 'None';
+  if (secUpgrade !== 'None' && SECUREIT_RATES[secUpgrade]) {
+    const bundledRate = bundled ? (SECUREIT_RATES[bundled] || 0) : 0;
+    secureUpgradeCost = (SECUREIT_RATES[secUpgrade] - bundledRate) * g.devices;
+  }
+  const secureTotalForDisplay = secureUpgradeCost;
+  show('secureit-seats-block', showSeats);
+
+  const net = calcNetwork('mi');
+
+  show('mi-pentest-options', ptOn);
+  const ptTier    = autoSelectPenTest('mi', g.totalUsers);
+  const ptData    = PENTEST[ptTier];
+  const ptMonthly = ptOn ? ptData.monthly : 0;
+
+  const monthlyTotal = manageTotal + emailCost + overageCost + secureTotalForDisplay + net.total + ptMonthly;
+  const annualTotal  = (monthlyTotal * 12) + (ptOn ? 500 : 0);
+
+  // ── Summary ──
+  show('s-manage-section', true);
+  show('s-aug-section', false);
+  set('s-solution', 'ManageIT');
+  set('s-tier', currentHours);
+  set('s-seats', `${g.seats} (${g.users} users / ${g.devices} devices)`);
+  show('s-email-row', g.emailOnly > 0);
+  set('s-email', g.emailOnly);
+  set('s-term', `${g.term} Year${g.term>1?'s':''}`);
+
+  set('s-base-price', fmt(baseRate));
+  set('s-vol-disc', fmtPct(g.discPct));
+  set('s-disc-price', fmt(discRate));
+  set('s-manage-main-lbl', `ManageIT ${plan} (${g.seats} seats)`);
+  set('s-manage-main', fmt(manageTotal));
+  show('s-email-line', g.emailOnly > 0);
+  set('s-email-line-lbl', `Email-Only (${g.emailOnly} × ${fmt(p.EmailOnly)})`);
+  set('s-email-line-val', fmt(emailCost));
+
+  // Remove any old stale overage line that was previously under ManageIT
+  const oldOverageEl = $('s-overage-line');
+  if (oldOverageEl) oldOverageEl.remove();
+
+  // Always clean up dynamic SecureIT sub-lines before rebuilding
+  [$('s-secure-upgrade-line'), $('s-secure-overage-line')].forEach(el => el && el.remove());
+
+  // SecureIT section — bundled shows "Included", upgrade and overage injected after
+  if (bundled) {
+    show('s-secure-line', true);
+    set('s-secure-line-lbl', bundledLabel);
+    set('s-secure-line-val', 'Included');
+    $('s-secure-line-val').className = 'qp-val muted';
+
+    let anchor = $('s-secure-line');
+    if (secUpgrade !== 'None' && secureTotalForDisplay > 0) {
+      anchor.insertAdjacentHTML('afterend',
+        `<div class="qp-row" id="s-secure-upgrade-line">
+           <span class="qp-label">SecureIT ${secUpgrade} Upgrade (${g.devices} devices)</span>
+           <span class="qp-val">${fmt(secureTotalForDisplay)}</span>
+         </div>`);
+      anchor = $('s-secure-upgrade-line');
+    }
+    if (overageUsers > 0) {
+      anchor.insertAdjacentHTML('afterend',
+        `<div class="qp-row" id="s-secure-overage-line">
+           <span class="qp-label">Additional Users (${overageUsers} × $5.00)</span>
+           <span class="qp-val">${fmt(overageCost)}</span>
+         </div>`);
+    }
+  } else if (secUpgrade !== 'None') {
+    show('s-secure-line', true);
+    set('s-secure-line-lbl', `SecureIT ${secUpgrade} (${g.devices} devices)`);
+    set('s-secure-line-val', fmt(secureTotalForDisplay));
+    $('s-secure-line-val').className = 'qp-val';
+  } else {
+    show('s-secure-line', false);
+  }
+
+  $('s-net-lines').innerHTML = net.items.map(i =>
+    `<div class="qp-row"><span class="qp-label">${i.l} (${i.q} × ${fmt(i.r)})</span><span class="qp-val">${fmt(i.t)}</span></div>`
+  ).join('');
+
+  if (ptOn) {
+    show('s-pen-line', true);
+    set('s-pen-line-lbl', `Pen Testing — ${ptData.label}`);
+    set('s-pen-line-val', fmt(ptMonthly));
+  } else { show('s-pen-line', false); }
+
+  set('s-monthly', fmt(monthlyTotal));
+  set('s-annual', fmt(annualTotal));
+}
+
+function calcAugmentIT(g) {
+  const rate       = AUGMENTIT[currentHours];
+  const tickets    = getNum('aug_tickets');
+  const ptOn       = $('aug_pentest_enabled').checked;
+  const secPlan    = getRadio('aug_secureit_plan') || 'None';
+
+  $('aug-rate-detail').textContent = `$${rate}/ticket at ${currentHours}`;
+
+  const discRate   = rate * g.mult;
+  const augTotal   = discRate * tickets;
+  const net        = calcNetwork('aug');
+
+  const secureCost = secPlan !== 'None' ? AUG_SECUREIT_RATES[secPlan] * g.seats : 0;
+
+  show('aug-pentest-options', ptOn);
+  const ptTier     = autoSelectPenTest('aug', g.totalUsers);
+  const ptData     = PENTEST[ptTier];
+  const ptMonthly  = ptOn ? ptData.monthly : 0;
+
+  const monthlyTotal = augTotal + secureCost + net.total + ptMonthly;
+  const annualTotal  = (monthlyTotal * 12) + (ptOn ? 500 : 0);
+
+  // ── Summary ──
+  show('s-manage-section', false);
+  show('s-aug-section', true);
+  set('s-solution', 'AugmentIT');
+  set('s-tier', currentHours);
+  set('s-seats', `${g.seats} (${g.users} users / ${g.devices} devices)`);
+  show('s-email-row', false);
+  set('s-term', `${g.term} Year${g.term>1?'s':''}`);
+
+  set('s-aug-rate', fmt(rate));
+  set('s-aug-disc', fmtPct(g.discPct));
+  set('s-aug-disc-rate', fmt(discRate));
+  set('s-aug-total-lbl', `AugmentIT (${tickets} tickets)`);
+  set('s-aug-total', fmt(augTotal));
+
+  if (secPlan !== 'None') {
+    show('s-aug-secure-line', true);
+    set('s-aug-secure-lbl', `SecureIT ${secPlan} (${g.seats} seats)`);
+    set('s-aug-secure-val', fmt(secureCost));
+  } else {
+    show('s-aug-secure-line', false);
+  }
+
+  $('s-aug-net-lines').innerHTML = net.items.map(i =>
+    `<div class="qp-row"><span class="qp-label">${i.l} (${i.q} × ${fmt(i.r)})</span><span class="qp-val">${fmt(i.t)}</span></div>`
+  ).join('');
+
+  if (ptOn) {
+    show('s-aug-pen-line', true);
+    set('s-aug-pen-val', fmt(ptMonthly));
+  } else { show('s-aug-pen-line', false); }
+
+  set('s-monthly', fmt(monthlyTotal));
+  set('s-annual', fmt(annualTotal));
+}
+
+// ═══════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════
+function setHours(h) {
+  currentHours = h;
+  ['8x5x5','5x8x5','24x7x365'].forEach(v =>
+    $('hr-'+v).classList.toggle('active', v === h)
+  );
+  recalc();
+}
+
+function switchSolution(sol) {
+  activeSolution = sol;
+  document.querySelectorAll('.sol-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sol-btn').forEach(b => b.classList.remove('active'));
+  $('sol-'+sol).classList.add('active');
+  $('sol-btn-'+sol).classList.add('active');
+  recalc();
+}
+
+function switchSection(secId, btn, sol) {
+  const parent = $('sol-'+sol);
+  parent.querySelectorAll('.sec-content').forEach(s => s.classList.remove('active'));
+  parent.querySelectorAll('.sec-tab').forEach(b => b.classList.remove('active'));
+  $('sec-'+secId).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ═══════════════════════════════
+//  COPY
+// ═══════════════════════════════
+function copyQuote() {
+  const lines = [
+    'DivergeIT® Pricing Quote', '══════════════════════',
+    `Solution:      ${$('s-solution').textContent}`,
+    `Support Tier:  ${$('s-tier').textContent}`,
+    `Seats:         ${$('s-seats').textContent}`,
+    `Term:          ${$('s-term').textContent}`,
+    '──────────────────────',
+    `Monthly Total: ${$('s-monthly').textContent}`,
+    `Annual Value:  ${$('s-annual').textContent}`,
+  ].join('\n');
+  navigator.clipboard.writeText(lines).then(() => {
+    const btn = event.currentTarget;
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = orig, 1500);
+  });
+}
+
+// ═══════════════════════════════
+//  INIT
+// ═══════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  renderDiscountTable(0, 1);
+  recalc();
+});
+</script>
+</body>
+</html>

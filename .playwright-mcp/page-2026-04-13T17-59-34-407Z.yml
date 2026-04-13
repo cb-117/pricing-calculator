@@ -1,0 +1,165 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e4]: D
+      - generic [ref=e5]:
+        - generic [ref=e6]: DivergeIT
+        - generic [ref=e7]: It's in our future
+    - generic [ref=e8]: Pricing Calculator
+  - generic [ref=e9]:
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - button "👤Prospect" [ref=e12] [cursor=pointer]
+        - button "🌐Network" [ref=e13] [cursor=pointer]
+        - button "🔒Security" [ref=e14] [cursor=pointer]
+        - button "🛡️Pen Testing" [ref=e15] [cursor=pointer]
+      - generic [ref=e17]:
+        - generic [ref=e18]:
+          - button "ManageIT" [ref=e19] [cursor=pointer]
+          - button "SecureIT" [ref=e20] [cursor=pointer]
+          - button "AugmentIT" [ref=e21] [cursor=pointer]
+        - generic [ref=e22]:
+          - generic [ref=e23]:
+            - generic [ref=e24]: ⚙️
+            - generic [ref=e25]:
+              - generic [ref=e26]: ManageIT Configuration
+              - generic [ref=e27]: Managed IT services plan and user configuration
+          - generic [ref=e28]:
+            - generic [ref=e29]: Service Desk Support Hours
+            - generic [ref=e30]:
+              - generic [ref=e31] [cursor=pointer]:
+                - radio "8×5×5 Business hours"
+                - generic [ref=e32]:
+                  - generic [ref=e33]: 8×5×5
+                  - generic [ref=e34]: Business hours
+              - generic [ref=e35] [cursor=pointer]:
+                - radio "5×8×5 Extended hours"
+                - generic [ref=e36]:
+                  - generic [ref=e37]: 5×8×5
+                  - generic [ref=e38]: Extended hours
+              - generic [ref=e39] [cursor=pointer]:
+                - radio "24×7×365 Always-on" [checked]
+                - generic [ref=e40]:
+                  - generic [ref=e41]: 24×7×365
+                  - generic [ref=e42]: Always-on
+            - generic [ref=e43]: Applies to ManageIT and AugmentIT plans
+          - generic [ref=e44]:
+            - generic [ref=e45]: ManageIT Plan
+            - generic [ref=e46]:
+              - generic [ref=e47] [cursor=pointer]:
+                - radio "Core $155.00/user/mo" [checked]
+                - generic [ref=e48]:
+                  - generic [ref=e49]: Core
+                  - generic [ref=e50]: $155.00/user/mo
+              - generic [ref=e51] [cursor=pointer]:
+                - radio "Plus $210.00/user/mo"
+                - generic [ref=e52]:
+                  - generic [ref=e53]: Plus
+                  - generic [ref=e54]: $210.00/user/mo
+              - generic [ref=e55] [cursor=pointer]:
+                - radio "Pro $250.00/user/mo"
+                - generic [ref=e56]:
+                  - generic [ref=e57]: Pro
+                  - generic [ref=e58]: $250.00/user/mo
+          - generic [ref=e59]:
+            - generic [ref=e60]:
+              - generic [ref=e61]: User Count
+              - spinbutton "User Count" [ref=e62]: "25"
+              - generic [ref=e63]: Standard managed users
+            - generic [ref=e64]:
+              - generic [ref=e65]: Email-Only Users
+              - spinbutton "Email-Only Users" [ref=e66]: "0"
+              - generic [ref=e67]: $60/user/mo at 24x7x365 tier
+          - generic [ref=e68]:
+            - generic [ref=e69]:
+              - generic [ref=e70]: Device Count
+              - spinbutton "Device Count" [ref=e71]: "25"
+              - generic [ref=e72]: Extra devices charged at ½ plan rate
+            - generic [ref=e73]:
+              - generic [ref=e74]: Contract Term
+              - combobox "Contract Term" [ref=e75]:
+                - option "1 Year" [selected]
+                - option "2 Years"
+                - option "3 Years"
+                - option "5 Years"
+              - generic [ref=e76]: Longer terms unlock volume discounts
+    - generic [ref=e77]:
+      - generic [ref=e78]:
+        - generic [ref=e79]:
+          - generic [ref=e80]: Pricing Summary
+          - generic [ref=e81]: Live estimate — subject to final review
+        - generic [ref=e82]:
+          - generic [ref=e83]:
+            - generic [ref=e84]: Configuration
+            - generic [ref=e85]:
+              - generic [ref=e86]: Support Tier
+              - generic [ref=e87]: 24x7x365
+            - generic [ref=e88]:
+              - generic [ref=e89]: Users / Devices
+              - generic [ref=e90]: 25 / 25
+            - generic [ref=e91]:
+              - generic [ref=e92]: Contract Term
+              - generic [ref=e93]: 1 Year
+            - generic [ref=e94]:
+              - generic [ref=e95]: Volume Discount
+              - generic [ref=e96]: 0%
+          - separator [ref=e97]
+          - generic [ref=e98]:
+            - generic [ref=e99]: ManageIT
+            - generic [ref=e101]:
+              - generic [ref=e102]: ManageIT Core × 25 users
+              - generic [ref=e103]: $3,875.00
+            - generic [ref=e104]:
+              - generic [ref=e105]: ManageIT Total
+              - generic [ref=e106]: $5,812.50
+          - separator [ref=e107]
+          - generic [ref=e109]:
+            - generic [ref=e110]: Monthly Recurring
+            - generic [ref=e111]: $5,812.50
+          - generic [ref=e112]:
+            - generic [ref=e113]: Annual Contract Value
+            - generic [ref=e114]: $69,750.00
+          - generic [ref=e115]:
+            - button "Print Quote" [ref=e116] [cursor=pointer]
+            - button "Copy" [ref=e117] [cursor=pointer]
+      - generic [ref=e118]:
+        - generic [ref=e119]: Volume Discount Reference
+        - table [ref=e121]:
+          - rowgroup [ref=e122]:
+            - row "Users 1yr 2yr 3yr 5yr" [ref=e123]:
+              - columnheader "Users" [ref=e124]
+              - columnheader "1yr" [ref=e125]
+              - columnheader "2yr" [ref=e126]
+              - columnheader "3yr" [ref=e127]
+              - columnheader "5yr" [ref=e128]
+          - rowgroup [ref=e129]:
+            - row "0–25 0% 1.5% 3% 6%" [ref=e130]:
+              - cell "0–25" [ref=e131]
+              - cell "0%" [ref=e132]
+              - cell "1.5%" [ref=e133]
+              - cell "3%" [ref=e134]
+              - cell "6%" [ref=e135]
+            - row "26–50 0% 1.5% 3% 6%" [ref=e136]:
+              - cell "26–50" [ref=e137]
+              - cell "0%" [ref=e138]
+              - cell "1.5%" [ref=e139]
+              - cell "3%" [ref=e140]
+              - cell "6%" [ref=e141]
+            - row "51–100 3% 4.5% 6% 9%" [ref=e142]:
+              - cell "51–100" [ref=e143]
+              - cell "3%" [ref=e144]
+              - cell "4.5%" [ref=e145]
+              - cell "6%" [ref=e146]
+              - cell "9%" [ref=e147]
+            - row "101–250 6% 7.5% 9% 12%" [ref=e148]:
+              - cell "101–250" [ref=e149]
+              - cell "6%" [ref=e150]
+              - cell "7.5%" [ref=e151]
+              - cell "9%" [ref=e152]
+              - cell "12%" [ref=e153]
+            - row "250+ 9% 10.5% 12% 15%" [ref=e154]:
+              - cell "250+" [ref=e155]
+              - cell "9%" [ref=e156]
+              - cell "10.5%" [ref=e157]
+              - cell "12%" [ref=e158]
+              - cell "15%" [ref=e159]
