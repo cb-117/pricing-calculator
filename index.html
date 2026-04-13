@@ -656,7 +656,7 @@
       <div class="section-tabs">
         <button class="sec-tab active" onclick="switchSection('aug-tickets', this, 'augmentit')">AugmentIT</button>
         <button class="sec-tab" onclick="switchSection('aug-secureit', this, 'augmentit')">SecureIT</button>
-        <button class="sec-tab" onclick="switchSection('aug-network', this, 'augmentit')">Network</button>
+        <button class="sec-tab" onclick="switchSection('aug-network', this, 'augmentit')">Infrastructure</button>
         <button class="sec-tab" onclick="switchSection('aug-pentest', this, 'augmentit')">Pen Testing</button>
       </div>
 
@@ -1091,7 +1091,7 @@ function calcManageIT(g, p) {
     if (overageUsers > 0) {
       anchor.insertAdjacentHTML('afterend',
         `<div class="qp-row" id="s-secure-overage-line">
-           <span class="qp-label">Additional Users (${overageUsers} × $5.00)</span>
+           <span class="qp-label">Additional SecureIT Users (${overageUsers} × $5.00)</span>
            <span class="qp-val">${fmt(overageCost)}</span>
          </div>`);
     }
