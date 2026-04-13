@@ -528,9 +528,9 @@
       <div>
         <label class="cfg-label">Support Hours</label>
         <div class="hours-pills">
-          <div class="hr-pill" id="hr-8x5x5"     onclick="setHours('8x5x5')">8×5</div>
+          <div class="hr-pill active" id="hr-8x5x5" onclick="setHours('8x5x5')">8×5</div>
           <div class="hr-pill" id="hr-5x8x5"     onclick="setHours('5x8x5')">5×8</div>
-          <div class="hr-pill active" id="hr-24x7x365" onclick="setHours('24x7x365')">24×7</div>
+          <div class="hr-pill" id="hr-24x7x365" onclick="setHours('24x7x365')">24×7</div>
         </div>
       </div>
       <div>
@@ -794,7 +794,7 @@ let DISCOUNTS        = null;
 // ═══════════════════════════════
 //  STATE
 // ═══════════════════════════════
-let currentHours = '24x7x365';
+let currentHours = '8x5x5';
 let activeSolution = 'manageit';
 
 // ═══════════════════════════════
