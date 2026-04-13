@@ -781,27 +781,15 @@
 // ═══════════════════════════════
 //  DATA
 // ═══════════════════════════════
-const MANAGEIT = {
-  '8x5x5':    { Core:80,  Plus:135, Pro:170, EmailOnly:25 },
-  '5x8x5':    { Core:110, Plus:160, Pro:200, EmailOnly:40 },
-  '24x7x365': { Core:155, Plus:210, Pro:250, EmailOnly:60 },
-};
-const SECUREIT_RATES     = { Core:15, Plus:50, Pro:90 };
-const AUG_SECUREIT_RATES = { Plus:60, Pro:100 };
-const AUGMENTIT = { '8x5x5':26, '5x8x5':42, '24x7x365':65 };
-const NETWORK = { firewall:105, switch:55, ap:25, workstation:15, server:210 };
-const PENTEST = {
-  small: { monthly:950,  label:'Small (1–21 users)' },
-  large: { monthly:1400, label:'Large (22–46 users)' },
-  max:   { monthly:1900, label:'Max (47+ users)'     },
-};
-const DISCOUNTS = [
-  { label:'0–25',    max:25,       t:{1:0,  2:1.5, 3:3,  5:6  } },
-  { label:'26–50',   max:50,       t:{1:0,  2:1.5, 3:3,  5:6  } },
-  { label:'51–100',  max:100,      t:{1:3,  2:4.5, 3:6,  5:9  } },
-  { label:'101–250', max:250,      t:{1:6,  2:7.5, 3:9,  5:12 } },
-  { label:'250+',    max:Infinity, t:{1:9,  2:10.5,3:12, 5:15 } },
-];
+//  PRICING (loaded from /api/pricing)
+// ═══════════════════════════════
+let MANAGEIT         = null;
+let SECUREIT_RATES   = null;
+let AUG_SECUREIT_RATES = null;
+let AUGMENTIT        = null;
+let NETWORK          = null;
+let PENTEST          = null;
+let DISCOUNTS        = null;
 
 // ═══════════════════════════════
 //  STATE
@@ -1241,7 +1229,27 @@ function copyQuote() {
 // ═══════════════════════════════
 //  INIT
 // ═══════════════════════════════
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const res = await fetch('/api/pricing');
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    MANAGEIT         = data.ManageIT;
+    SECUREIT_RATES   = data.SecureIT;
+    AUG_SECUREIT_RATES = data.AugSecureIT;
+    AUGMENTIT        = data.AugmentIT;
+    NETWORK          = data.Network;
+    PENTEST          = data.PenTest;
+    // Restore Infinity for the last discount band (JSON serialises it as null)
+    DISCOUNTS        = data.Discounts.map(d => ({ ...d, max: d.max ?? Infinity }));
+  } catch (e) {
+    console.error('Failed to load pricing config:', e);
+    document.body.innerHTML = '<div style="padding:40px;font-family:sans-serif;color:#c00;">' +
+      '<h2>Failed to load pricing data.</h2><p>Please refresh or contact support.</p></div>';
+    return;
+  }
+
   renderDiscountTable(0, 1);
   recalc();
 });
