@@ -12,14 +12,15 @@ const PRICING = {
   // Every tier includes a SecureIT tier at no additional cost.
   //
   // Target pricing is quoted on a 3-year commitment at 0-50 users (3% volume
-  // discount), so list is grossed up by that discount and rounded to the dollar:
-  //   Core  105 / 0.97 = 108.25 -> 108  (3yr lands at 104.76)
-  //   Plus  170 / 0.97 = 175.26 -> 175  (3yr lands at 169.75)
+  // discount), so list is grossed up by that discount and rounded UP to the
+  // dollar, so a 3-year quote never lands under target:
+  //   Core  105 / 0.97 = 108.25 -> 109  (3yr lands at 105.73)
+  //   Plus  170 / 0.97 = 175.26 -> 176  (3yr lands at 170.72)
   //   Pro   250 / 0.97 = 257.73 -> 258  (3yr lands at 250.26)
   // Bands above 50 users discount further off the same list.
   ManageIT: {
-    Core: { rate: 108, hours: '8x5x5',    secureit: 'Core' },
-    Plus: { rate: 175, hours: '5x8x5',    secureit: 'Core' },
+    Core: { rate: 109, hours: '8x5x5',    secureit: 'Core' },
+    Plus: { rate: 176, hours: '5x8x5',    secureit: 'Core' },
     Pro:  { rate: 258, hours: '24x7x365', secureit: 'Plus' },
     EmailOnly: { '8x5x5': 25, '5x8x5': 40, '24x7x365': 60 },
   },
