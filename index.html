@@ -939,7 +939,8 @@ let ampUsersTouched = false;
 //  HELPERS
 // ═══════════════════════════════
 const $ = id => document.getElementById(id);
-const fmt = n => '$' + n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+const ceilD = n => Math.ceil(n - 1e-9);
+const fmt = n => '$' + ceilD(n).toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:0});
 const fmtPct = n => n.toFixed(1) + '%';
 const getNum = id => parseInt($(id).value) || 0;
 const getRadio = name => { const el = document.querySelector(`input[name="${name}"]:checked`); return el ? el.value : null; };
@@ -1178,7 +1179,7 @@ function calcManageIT(g, rate, emailRate, plan) {
   const ptOn    = $('mi_pentest_enabled').checked;
 
   const baseRate     = rate;
-  const discRate     = baseRate * g.mult;
+  const discRate     = ceilD(baseRate * g.mult);   // whole dollars per seat
   const manageTotal  = discRate * g.seats;
   const emailCost    = emailRate * g.emailOnly;  // email-only not discounted
 
@@ -1257,7 +1258,7 @@ function calcManageIT(g, rate, emailRate, plan) {
   if (overageUsers > 0) {
     anchor.insertAdjacentHTML('afterend',
       `<div class="qp-row" id="s-secure-overage-line">
-         <span class="qp-label">Additional SecureIT Users (${overageUsers} × $5.00)</span>
+         <span class="qp-label">Additional SecureIT Users (${overageUsers} × $5)</span>
          <span class="qp-val">${fmt(overageCost)}</span>
        </div>`);
   }
@@ -1284,7 +1285,7 @@ function calcAugmentIT(g) {
 
   $('aug-rate-detail').textContent = `$${rate}/ticket at ${currentHours}`;
 
-  const discRate   = rate * g.mult;
+  const discRate   = ceilD(rate * g.mult);        // whole dollars per ticket
   const augTotal   = discRate * tickets;
   const net        = calcNetwork('aug');
 
