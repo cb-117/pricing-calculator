@@ -159,6 +159,10 @@
     }
     .hr-pill:hover { border-color: var(--green); color: var(--green); }
     .hr-pill.active { background: var(--green); border-color: var(--green); color: white; }
+    .hours-pills.locked .hr-pill { cursor: default; opacity: 0.45; pointer-events: none; }
+    .hours-pills.locked .hr-pill:hover { border-color: var(--border); color: var(--text-muted); }
+    .hours-pills.locked .hr-pill.active { opacity: 1; }
+    .hours-pills.locked .hr-pill.active:hover { border-color: var(--green); color: white; }
 
     /* Inputs */
     input[type="number"], select {
@@ -210,7 +214,7 @@
     /* ── Solution Switcher ── */
     .solution-switcher {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(3, 1fr);
       gap: 4px;
       background: var(--navy);
       border-radius: var(--radius) var(--radius) 0 0;
@@ -312,7 +316,11 @@
     }
     .rc-title { font-family: 'Montserrat', Arial, sans-serif; font-weight: 700; font-size: 13px; }
     .rc-price { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .radio-card-group { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+    @media (max-width: 640px) { .radio-card-group { grid-template-columns: repeat(2,1fr); } }
+    .rc-meta { font-size: 10px; color: var(--text-muted); margin-top: 4px; line-height: 1.45; }
     .radio-card input:checked + .rc-label .rc-price { color: var(--green-dark); }
+    .radio-card input:checked + .rc-label .rc-meta { color: var(--green-dark); }
 
     /* ── Toggle ── */
     .toggle-row {
@@ -527,11 +535,12 @@
     <div class="config-grid">
       <div>
         <label class="cfg-label">Support Hours</label>
-        <div class="hours-pills">
+        <div class="hours-pills" id="hours-pills">
           <div class="hr-pill active" id="hr-8x5x5" onclick="setHours('8x5x5')">8×5</div>
           <div class="hr-pill" id="hr-5x8x5"     onclick="setHours('5x8x5')">5×8</div>
           <div class="hr-pill" id="hr-24x7x365" onclick="setHours('24x7x365')">24×7</div>
         </div>
+        <div class="cfg-hint" id="hours-hint"></div>
       </div>
       <div>
         <label class="cfg-label" for="g_users">Users</label>
@@ -573,6 +582,10 @@
     <button class="sol-btn" id="sol-btn-augmentit" onclick="switchSolution('augmentit')">
       📋 AugmentIT
       <span class="sol-badge">+ Network + Pen Test</span>
+    </button>
+    <button class="sol-btn" id="sol-btn-amplifyai" onclick="switchSolution('amplifyai')">
+      ✨ AmplifyAI
+      <span class="sol-badge">Success Team + FDE</span>
     </button>
   </div>
 
@@ -696,6 +709,48 @@
       </div>
     </div><!-- /sol-augmentit -->
 
+    <!-- ══ AMPLIFYAI SOLUTION ══ -->
+    <div id="sol-amplifyai" class="sol-panel">
+      <div class="section-tabs">
+        <button class="sec-tab active" onclick="switchSection('amp-team', this, 'amplifyai')">Success Team</button>
+        <button class="sec-tab" onclick="switchSection('amp-agents', this, 'amplifyai')">Managed Agents</button>
+        <button class="sec-tab" onclick="switchSection('amp-fde', this, 'amplifyai')">Forward Deployed Eng</button>
+      </div>
+
+      <div id="sec-amp-team" class="sec-content active">
+        <div class="sec-heading"><div class="sec-icon">✨</div><div><div class="sec-title">AI Success Team</div><div class="sec-sub">Governed Copilot / Claude adoption — flat published rate, no volume discount</div></div></div>
+        <div class="field">
+          <label class="label">Success Team Tier</label>
+          <div class="three-col" id="amplify-team-plans"></div>
+          <div class="hint" id="amp-team-hint" style="margin-top:8px;"></div>
+        </div>
+        <div class="field">
+          <label class="label" for="amp_users">AI-Enabled Users</label>
+          <input type="number" id="amp_users" min="0" value="25" oninput="onAmpUsersInput()" style="max-width:200px;" />
+          <div class="hint" id="amp-users-hint"></div>
+        </div>
+      </div>
+
+      <div id="sec-amp-agents" class="sec-content">
+        <div class="sec-heading"><div class="sec-icon">🤖</div><div><div class="sec-title">Managed Agents</div><div class="sec-sub">Flat per-agent monthly rate — every agent monitored and maintained</div></div></div>
+        <div class="net-item">
+          <div class="net-item-info"><div class="net-item-name">Managed Agents</div><div class="net-item-desc">Builds from Forward Deployed Engineering land on this meter</div></div>
+          <div class="net-item-rate" id="amp-agent-rate">$20/agent/mo</div>
+          <input type="number" class="net-item-qty" id="amp_agents" min="0" value="0" oninput="recalc()" />
+        </div>
+      </div>
+
+      <div id="sec-amp-fde" class="sec-content">
+        <div class="sec-heading"><div class="sec-icon">🛠️</div><div><div class="sec-title">Forward Deployed Engineering</div><div class="sec-sub">AI engineer embedded with your team — hourly, no commitment</div></div></div>
+        <div class="net-item">
+          <div class="net-item-info"><div class="net-item-name">FDE Hours / Month</div><div class="net-item-desc">Hourly or scoped project — maps your workflows, builds the agents that matter</div></div>
+          <div class="net-item-rate" id="amp-fde-rate">$185/hour</div>
+          <input type="number" class="net-item-qty" id="amp_fde_hours" min="0" value="0" oninput="recalc()" />
+        </div>
+        <div class="info-box"><b>Estimate only</b>Forward Deployed Engineering is quoted hourly or as a scoped project. Enter an expected monthly run rate to model it.</div>
+      </div>
+    </div><!-- /sol-amplifyai -->
+
   </div><!-- /.card -->
 </div><!-- /left column -->
 
@@ -712,8 +767,8 @@
           <!-- Config section -->
           <div class="qp-section">
             <div class="qp-row"><span class="qp-label">Solution</span><span class="qp-val" id="s-solution">ManageIT</span></div>
-            <div class="qp-row"><span class="qp-label">Support Tier</span><span class="qp-val" id="s-tier">24×7×365</span></div>
-            <div class="qp-row"><span class="qp-label">Billable Seats</span><span class="qp-val" id="s-seats">25</span></div>
+            <div class="qp-row" id="s-tier-row"><span class="qp-label">Support Tier</span><span class="qp-val" id="s-tier">24×7×365</span></div>
+            <div class="qp-row" id="s-seats-row"><span class="qp-label">Billable Seats</span><span class="qp-val" id="s-seats">25</span></div>
             <div class="qp-row" id="s-email-row" style="display:none;"><span class="qp-label">Email-Only Users</span><span class="qp-val" id="s-email">0</span></div>
             <div class="qp-row"><span class="qp-label">Contract Term</span><span class="qp-val" id="s-term">1 Year</span></div>
           </div>
@@ -741,6 +796,17 @@
             <div class="qp-row" id="s-aug-secure-line" style="display:none;"><span class="qp-label" id="s-aug-secure-lbl">SecureIT</span><span class="qp-val" id="s-aug-secure-val">$0.00</span></div>
             <div id="s-aug-net-lines"></div>
             <div class="qp-row" id="s-aug-pen-line" style="display:none;"><span class="qp-label">Pen Testing Monthly</span><span class="qp-val" id="s-aug-pen-val">$0.00</span></div>
+          </div>
+
+          <!-- AmplifyAI breakdown -->
+          <div id="s-amp-section" style="display:none;" class="qp-section">
+            <div class="qp-row"><span class="qp-label">AI-Enabled Users</span><span class="qp-val" id="s-amp-users">0</span></div>
+            <div class="qp-row"><span class="qp-label">Volume Discount</span><span class="qp-val muted" id="s-amp-disc">Flat published rate</span></div>
+            <div class="qp-divider"></div>
+            <div class="qp-row" id="s-amp-team-line" style="display:none;"><span class="qp-label" id="s-amp-team-lbl">Success Team</span><span class="qp-val" id="s-amp-team-val">$0.00</span></div>
+            <div class="qp-row" id="s-amp-extra-line" style="display:none;"><span class="qp-label" id="s-amp-extra-lbl">Additional Users</span><span class="qp-val" id="s-amp-extra-val">$0.00</span></div>
+            <div class="qp-row" id="s-amp-agent-line" style="display:none;"><span class="qp-label" id="s-amp-agent-lbl">Managed Agents</span><span class="qp-val" id="s-amp-agent-val">$0.00</span></div>
+            <div class="qp-row" id="s-amp-fde-line" style="display:none;"><span class="qp-label" id="s-amp-fde-lbl">Forward Deployed Engineering</span><span class="qp-val" id="s-amp-fde-val">$0.00</span></div>
           </div>
 
           <!-- Total -->
@@ -781,21 +847,90 @@
 // ═══════════════════════════════
 //  DATA
 // ═══════════════════════════════
-//  PRICING (loaded from /api/pricing)
+//  PRICING (loaded from /api/pricing, DEFAULT_PRICING is the fallback)
 // ═══════════════════════════════
-let MANAGEIT         = null;
-let SECUREIT_RATES   = null;
-let AUG_SECUREIT_RATES = null;
-let AUGMENTIT        = null;
-let NETWORK          = null;
-let PENTEST          = null;
-let DISCOUNTS        = null;
+
+// Keeps the tool pricing correctly if /api/pricing is unreachable, and lets a
+// deploy land before the PricingConfig table is re-seeded: any row still in the
+// old (per-support-hour) shape is ignored in favour of the default below.
+const DEFAULT_PRICING = {
+  // Flat per-seat rate. Support hours are an attribute of the tier, not a
+  // price driver. Every tier includes a SecureIT tier at no extra cost.
+  ManageIT: {
+    Core: { rate: 105, hours: '8x5x5',    secureit: 'Core' },
+    Plus: { rate: 170, hours: '5x8x5',    secureit: 'Core' },
+    Pro:  { rate: 250, hours: '24x7x365', secureit: 'Plus' },
+    EmailOnly: { '8x5x5': 25, '5x8x5': 40, '24x7x365': 60 },
+  },
+  // bundled.Core is 0 because SecureIT Core ships with every ManageIT plan,
+  // so upgrading out of it is charged at the full bundled rate.
+  SecureIT: {
+    standalone: { Core: 30, Plus: 75, Pro: 125 },
+    bundled:    { Core: 0,  Plus: 50, Pro: 90  },
+  },
+  AmplifyAI: {
+    SuccessTeam: {
+      Core: { base: 1000, includedUsers: 10, perUser: 35 },
+      Plus: { base: 1900, includedUsers: 10, perUser: 50 },
+    },
+    Agent: 20,
+    FDE:   185,
+  },
+  AugmentIT: { '8x5x5': 26, '5x8x5': 42, '24x7x365': 65 },
+  Network:   { firewall: 105, switch: 55, ap: 25, workstation: 15, server: 210 },
+  PenTest: {
+    small: { monthly: 950,  label: 'Small (1–21 users)' },
+    large: { monthly: 1400, label: 'Large (22–46 users)' },
+    max:   { monthly: 1900, label: 'Max (47+ users)' },
+  },
+  Discounts: [
+    { label: '0–25',    max: 25,   t: { 1: 0, 2: 1.5,  3: 3,  5: 6  } },
+    { label: '26–50',   max: 50,   t: { 1: 0, 2: 1.5,  3: 3,  5: 6  } },
+    { label: '51–100',  max: 100,  t: { 1: 3, 2: 4.5,  3: 6,  5: 9  } },
+    { label: '101–250', max: 250,  t: { 1: 6, 2: 7.5,  3: 9,  5: 12 } },
+    { label: '250+',    max: null, t: { 1: 9, 2: 10.5, 3: 12, 5: 15 } },
+  ],
+};
+
+let MANAGEIT   = null;   // { Core|Plus|Pro: {rate,hours,secureit}, EmailOnly: {} }
+let SECUREIT   = null;   // { standalone, bundled }
+let AMPLIFY    = null;
+let AUGMENTIT  = null;
+let NETWORK    = null;
+let PENTEST    = null;
+let DISCOUNTS  = null;
+
+const PLANS = ['Core', 'Plus', 'Pro'];
+const HOURS_LABEL = { '8x5x5': '8×5 support', '5x8x5': 'Extended 5×8', '24x7x365': '24×7 support' };
+
+// A row is only trusted if it matches the current schema; anything else (an
+// un-reseeded table, a partial write) falls back to DEFAULT_PRICING.
+function pickRow(data, key, isValid) {
+  const row = data && data[key];
+  try { if (row && isValid(row)) return row; } catch (e) { /* malformed */ }
+  console.warn(`Pricing row "${key}" missing or stale — using built-in default.`);
+  return DEFAULT_PRICING[key];
+}
+
+function loadPricing(data) {
+  MANAGEIT  = pickRow(data, 'ManageIT',  r => PLANS.every(p => r[p] && typeof r[p].rate === 'number') && r.EmailOnly);
+  SECUREIT  = pickRow(data, 'SecureIT',  r => r.standalone && r.bundled);
+  AMPLIFY   = pickRow(data, 'AmplifyAI', r => r.SuccessTeam && typeof r.FDE === 'number');
+  AUGMENTIT = pickRow(data, 'AugmentIT', r => typeof r['8x5x5'] === 'number');
+  NETWORK   = pickRow(data, 'Network',   r => typeof r.firewall === 'number');
+  PENTEST   = pickRow(data, 'PenTest',   r => r.small && r.large && r.max);
+  // Restore Infinity for the last discount band (JSON serialises it as null)
+  DISCOUNTS = pickRow(data, 'Discounts', r => Array.isArray(r) && r.length)
+    .map(d => ({ ...d, max: d.max ?? Infinity }));
+}
 
 // ═══════════════════════════════
 //  STATE
 // ═══════════════════════════════
 let currentHours = '8x5x5';
 let activeSolution = 'manageit';
+// AmplifyAI seats track the config-bar user count until the rep types over them
+let ampUsersTouched = false;
 
 // ═══════════════════════════════
 //  HELPERS
@@ -828,86 +963,78 @@ function autoSelectPenTest(prefix, totalUsers) {
 // ═══════════════════════════════
 //  RENDER PLAN CARDS
 // ═══════════════════════════════
-// ManageIT plan → default support hours
-const PLAN_DEFAULT_HOURS = { Core: '8x5x5', Plus: '5x8x5', Pro: '24x7x365' };
-
-// ManageIT plan → bundled SecureIT tier (null = none bundled)
-const PLAN_BUNDLED_SECURE = { Core: null, Plus: 'Core', Pro: 'Plus' };
+// Support hours and the included SecureIT tier are attributes of the ManageIT
+// plan, not separate price drivers.
+const planHours    = plan => MANAGEIT[plan].hours;
+const planSecureIT = plan => MANAGEIT[plan].secureit;
 
 function onPlanChange(plan) {
-  // Auto-select the default support hours for this plan
-  setHours(PLAN_DEFAULT_HOURS[plan]);
-  // setHours calls recalc, so no extra call needed
+  // Hours follow the tier. setHours calls recalc, so no extra call needed.
+  setHours(planHours(plan));
 }
 
 function renderManageITPlans() {
-  const p   = MANAGEIT[currentHours];
   const sel = getRadio('manageit_plan') || 'Core';
-  $('manageit-plans').innerHTML = ['Core','Plus','Pro'].map(n => `
+  $('manageit-plans').innerHTML = PLANS.map(n => {
+    const t = MANAGEIT[n];
+    return `
     <label class="radio-card">
       <input type="radio" name="manageit_plan" value="${n}" ${sel===n?'checked':''} onchange="onPlanChange('${n}')" />
       <div class="rc-label">
         <div class="rc-title">${n}</div>
-        <div class="rc-price">${fmt(p[n])}/seat/mo</div>
+        <div class="rc-price">${fmt(t.rate)}/seat/mo</div>
+        <div class="rc-meta">${HOURS_LABEL[t.hours]}<br/>SecureIT ${t.secureit} included</div>
+      </div>
+    </label>`;
+  }).join('');
+}
+
+// Upgrade price = the bundled (with-ManageIT) rate of the target tier less the
+// bundled rate of the tier already included. SecureIT Core is included with
+// every plan at a bundled rate of 0, so a Core-bundled plan pays the full
+// bundled Plus / Pro rate to move up.
+function secureUpgradeRate(bundledTier, targetTier) {
+  const B = SECUREIT.bundled;
+  return (B[targetTier] || 0) - (B[bundledTier] || 0);
+}
+
+function renderSecureITPlans(managePlan) {
+  const bundled = planSecureIT(managePlan);  // 'Core' or 'Plus'
+
+  show('secureit-bundled-notice', true);
+  $('secureit-bundled-title').textContent = `SecureIT ${bundled} — Included`;
+  $('secureit-bundled-desc').textContent =
+    `Bundled with ManageIT ${managePlan} at no additional cost.`;
+
+  const opts = [{ v: 'None', label: 'No Upgrade', price: null }].concat(
+    PLANS.slice(PLANS.indexOf(bundled) + 1).map(t => ({
+      v: t, label: `Upgrade to ${t}`, price: secureUpgradeRate(bundled, t),
+    }))
+  );
+
+  $('secureit-plan-label').textContent = 'SecureIT Upgrade (optional)';
+  // Switching ManageIT tiers can retire the selected upgrade (Core's "Plus"
+  // vanishes on Pro, which already bundles it) — fall back to no upgrade so a
+  // card is always visibly selected.
+  const prev = getRadio('secureit_plan') || 'None';
+  const sel  = opts.some(o => o.v === prev) ? prev : 'None';
+  const grid = $('secureit-plans');
+  grid.style.gridTemplateColumns = `repeat(${opts.length},1fr)`;
+  grid.innerHTML = opts.map(o => `
+    <label class="radio-card">
+      <input type="radio" name="secureit_plan" value="${o.v}" ${sel===o.v?'checked':''} onchange="recalc()" />
+      <div class="rc-label">
+        <div class="rc-title">${o.label}</div>
+        <div class="rc-price">${o.price ? '+'+fmt(o.price)+'/device' : 'Keep bundled'}</div>
       </div>
     </label>`).join('');
 }
 
-function renderSecureITPlans(managePlan) {
-  const bundled = PLAN_BUNDLED_SECURE[managePlan]; // null, 'Core', or 'Plus'
-
-  if (bundled) {
-    // Show bundled notice
-    show('secureit-bundled-notice', true);
-    $('secureit-bundled-title').textContent =
-      `SecureIT ${bundled} — Included`;
-    $('secureit-bundled-desc').textContent =
-      `Bundled with ManageIT ${managePlan} at no additional cost.`;
-
-    // Only show upgrade options above the bundled tier, priced as delta above bundled
-    const bundledRate = SECUREIT_RATES[bundled] || 0;
-    const upgradeOpts = bundled === 'Core'
-      ? [{v:'None',label:'No Upgrade',price:null},{v:'Plus',label:'Upgrade to Plus',price:SECUREIT_RATES.Plus - bundledRate},{v:'Pro',label:'Upgrade to Pro',price:SECUREIT_RATES.Pro - bundledRate}]
-      : [{v:'None',label:'No Upgrade',price:null},{v:'Pro',label:'Upgrade to Pro',price:SECUREIT_RATES.Pro - bundledRate}];
-
-    $('secureit-plan-label').textContent = 'SecureIT Upgrade (optional)';
-    const sel = getRadio('secureit_plan') || 'None';
-    $('secureit-plans').innerHTML = upgradeOpts.map(o => `
-      <label class="radio-card">
-        <input type="radio" name="secureit_plan" value="${o.v}" ${sel===o.v?'checked':''} onchange="recalc()" />
-        <div class="rc-label">
-          <div class="rc-title">${o.label}</div>
-          <div class="rc-price">${o.price ? '+'+fmt(o.price)+'/seat' : 'Keep bundled'}</div>
-        </div>
-      </label>`).join('');
-  } else {
-    // Core plan — full selector
-    show('secureit-bundled-notice', false);
-    $('secureit-plan-label').textContent = 'SecureIT Plan';
-    const opts = [
-      {v:'None',label:'None',price:null},
-      {v:'Core',label:'Core',price:SECUREIT_RATES.Core},
-      {v:'Plus',label:'Plus',price:SECUREIT_RATES.Plus},
-      {v:'Pro', label:'Pro', price:SECUREIT_RATES.Pro},
-    ];
-    const sel = getRadio('secureit_plan') || 'None';
-    $('secureit-plans').innerHTML = opts.map(o => `
-      <label class="radio-card">
-        <input type="radio" name="secureit_plan" value="${o.v}" ${sel===o.v?'checked':''} onchange="recalc()" />
-        <div class="rc-label">
-          <div class="rc-title">${o.label}</div>
-          <div class="rc-price">${o.price ? fmt(o.price)+'/seat' : 'No add-on'}</div>
-        </div>
-      </label>`).join('');
-  }
-}
-
+// AugmentIT has no ManageIT plan behind it, so SecureIT bills at standalone rates.
 function renderAugSecureIT() {
-  const opts = [
-    {v:'None', label:'None',  price:null},
-    {v:'Plus', label:'Plus',  price:AUG_SECUREIT_RATES.Plus},
-    {v:'Pro',  label:'Pro',   price:AUG_SECUREIT_RATES.Pro},
-  ];
+  const opts = [{ v: 'None', label: 'None', price: null }].concat(
+    PLANS.map(t => ({ v: t, label: t, price: SECUREIT.standalone[t] }))
+  );
   const sel = getRadio('aug_secureit_plan') || 'None';
   $('aug-secureit-plans').innerHTML = opts.map(o => `
     <label class="radio-card">
@@ -918,6 +1045,33 @@ function renderAugSecureIT() {
       </div>
     </label>`).join('');
 }
+
+function renderAmplifyPlans() {
+  const sel  = getRadio('amplify_plan') || 'None';
+  const opts = [{ v: 'None', title: 'None', price: 'No Success Team', meta: 'Agents / FDE only' }].concat(
+    ['Core', 'Plus'].map(t => {
+      const st = AMPLIFY.SuccessTeam[t];
+      return {
+        v: t,
+        title: `Success Team ${t}`,
+        price: `From ${fmt(st.base)}/mo`,
+        meta: `Covers first ${st.includedUsers} users<br/>+${fmt(st.perUser)}/user beyond ${st.includedUsers}`,
+      };
+    })
+  );
+  $('amplify-team-plans').innerHTML = opts.map(o => `
+    <label class="radio-card">
+      <input type="radio" name="amplify_plan" value="${o.v}" ${sel===o.v?'checked':''} onchange="recalc()" />
+      <div class="rc-label">
+        <div class="rc-title">${o.title}</div>
+        <div class="rc-price">${o.price}</div>
+        <div class="rc-meta">${o.meta}</div>
+      </div>
+    </label>`).join('');
+}
+
+function onAmpUsersInput() { ampUsersTouched = true;  recalc(); }
+function resetAmpUsers()   { ampUsersTouched = false; recalc(); }
 
 function updateManageITTabs(plan) {
   // Network tab only available for Core
@@ -987,8 +1141,15 @@ function recalc() {
   renderAugSecureIT();
   updateManageITTabs(plan);
 
+  // Only AugmentIT still prices off support hours. ManageIT takes its hours
+  // from the selected tier and AmplifyAI ignores them, so the pills are
+  // display-only on those tabs.
+  if (activeSolution === 'manageit') currentHours = planHours(plan);
+  syncHoursPills(activeSolution !== 'augmentit', plan);
+
   const g = getGlobal();
-  const p = MANAGEIT[currentHours];
+  const rate      = MANAGEIT[plan].rate;
+  const emailRate = MANAGEIT.EmailOnly[planHours(plan)];
 
   // Update config bar
   const driven = g.devices >= g.users ? 'Driven by devices' : 'Driven by users';
@@ -998,28 +1159,28 @@ function recalc() {
 
   // Update ManageIT plan seat hint
   $('mi-seat-hint').textContent =
-    `${g.seats} seats × ${fmt(p[plan])} = ${fmt(p[plan] * g.seats)} (before discount)`;
+    `${g.seats} seats × ${fmt(rate)} = ${fmt(rate * g.seats)} (before discount)`;
   $('email-only-info').textContent =
     g.emailOnly > 0
-      ? `${g.emailOnly} email-only users × ${fmt(p.EmailOnly)}/user = ${fmt(p.EmailOnly * g.emailOnly)}/mo (not discounted)`
-      : `Email-only users are billed at the support-tier rate ($${p.EmailOnly}/user at ${currentHours}).`;
+      ? `${g.emailOnly} email-only users × ${fmt(emailRate)}/user = ${fmt(emailRate * g.emailOnly)}/mo (not discounted)`
+      : `Email-only users are billed at the ManageIT ${plan} support level ($${emailRate}/user at ${HOURS_LABEL[planHours(plan)]}).`;
 
-  if (activeSolution === 'manageit') calcManageIT(g, p);
-  else calcAugmentIT(g);
+  if (activeSolution === 'manageit')      calcManageIT(g, rate, emailRate, plan);
+  else if (activeSolution === 'augmentit') calcAugmentIT(g);
+  else                                     calcAmplifyAI(g);
 }
 
-function calcManageIT(g, p) {
-  const plan    = getRadio('manageit_plan') || 'Core';
+function calcManageIT(g, rate, emailRate, plan) {
   const secUpgrade = getRadio('secureit_plan') || 'None'; // 'None' or upgrade tier
   const ptOn    = $('mi_pentest_enabled').checked;
 
-  const baseRate     = p[plan];
+  const baseRate     = rate;
   const discRate     = baseRate * g.mult;
   const manageTotal  = discRate * g.seats;
-  const emailCost    = p.EmailOnly * g.emailOnly;  // email-only not discounted
+  const emailCost    = emailRate * g.emailOnly;  // email-only not discounted
 
-  const bundled     = PLAN_BUNDLED_SECURE[plan]; // null, 'Core', or 'Plus'
-  const bundledLabel = bundled ? `SecureIT ${bundled} (included w/ ${plan})` : null;
+  const bundled      = planSecureIT(plan);       // 'Core' or 'Plus' — always included
+  const bundledLabel = `SecureIT ${bundled} (included w/ ${plan})`;
 
   // SecureIT is priced per device; overage = extra users × $5 only when effective SecureIT tier is Plus or Pro
   const effectiveSecTier = secUpgrade !== 'None' ? secUpgrade : bundled;
@@ -1029,9 +1190,8 @@ function calcManageIT(g, p) {
   // Upgrade cost = delta above bundled tier, billed per device
   let secureUpgradeCost = 0;
   const showSeats = secUpgrade !== 'None';
-  if (secUpgrade !== 'None' && SECUREIT_RATES[secUpgrade]) {
-    const bundledRate = bundled ? (SECUREIT_RATES[bundled] || 0) : 0;
-    secureUpgradeCost = (SECUREIT_RATES[secUpgrade] - bundledRate) * g.devices;
+  if (secUpgrade !== 'None') {
+    secureUpgradeCost = secureUpgradeRate(bundled, secUpgrade) * g.devices;
   }
   const secureTotalForDisplay = secureUpgradeCost;
   show('secureit-seats-block', showSeats);
@@ -1049,8 +1209,11 @@ function calcManageIT(g, p) {
   // ── Summary ──
   show('s-manage-section', true);
   show('s-aug-section', false);
+  show('s-amp-section', false);
+  show('s-tier-row', true);
+  show('s-seats-row', true);
   set('s-solution', 'ManageIT');
-  set('s-tier', currentHours);
+  set('s-tier', HOURS_LABEL[planHours(plan)]);
   set('s-seats', `${g.seats} (${g.users} users / ${g.devices} devices)`);
   show('s-email-row', g.emailOnly > 0);
   set('s-email', g.emailOnly);
@@ -1062,7 +1225,7 @@ function calcManageIT(g, p) {
   set('s-manage-main-lbl', `ManageIT ${plan} (${g.seats} seats)`);
   set('s-manage-main', fmt(manageTotal));
   show('s-email-line', g.emailOnly > 0);
-  set('s-email-line-lbl', `Email-Only (${g.emailOnly} × ${fmt(p.EmailOnly)})`);
+  set('s-email-line-lbl', `Email-Only (${g.emailOnly} × ${fmt(emailRate)})`);
   set('s-email-line-val', fmt(emailCost));
 
   // Remove any old stale overage line that was previously under ManageIT
@@ -1072,36 +1235,28 @@ function calcManageIT(g, p) {
   // Always clean up dynamic SecureIT sub-lines before rebuilding
   [$('s-secure-upgrade-line'), $('s-secure-overage-line')].forEach(el => el && el.remove());
 
-  // SecureIT section — bundled shows "Included", upgrade and overage injected after
-  if (bundled) {
-    show('s-secure-line', true);
-    set('s-secure-line-lbl', bundledLabel);
-    set('s-secure-line-val', 'Included');
-    $('s-secure-line-val').className = 'qp-val muted';
+  // SecureIT section — every plan bundles a tier, so this always shows
+  // "Included", with the upgrade and user overage injected after it.
+  show('s-secure-line', true);
+  set('s-secure-line-lbl', bundledLabel);
+  set('s-secure-line-val', 'Included');
+  $('s-secure-line-val').className = 'qp-val muted';
 
-    let anchor = $('s-secure-line');
-    if (secUpgrade !== 'None' && secureTotalForDisplay > 0) {
-      anchor.insertAdjacentHTML('afterend',
-        `<div class="qp-row" id="s-secure-upgrade-line">
-           <span class="qp-label">SecureIT ${secUpgrade} Upgrade (${g.devices} devices)</span>
-           <span class="qp-val">${fmt(secureTotalForDisplay)}</span>
-         </div>`);
-      anchor = $('s-secure-upgrade-line');
-    }
-    if (overageUsers > 0) {
-      anchor.insertAdjacentHTML('afterend',
-        `<div class="qp-row" id="s-secure-overage-line">
-           <span class="qp-label">Additional SecureIT Users (${overageUsers} × $5.00)</span>
-           <span class="qp-val">${fmt(overageCost)}</span>
-         </div>`);
-    }
-  } else if (secUpgrade !== 'None') {
-    show('s-secure-line', true);
-    set('s-secure-line-lbl', `SecureIT ${secUpgrade} (${g.devices} devices)`);
-    set('s-secure-line-val', fmt(secureTotalForDisplay));
-    $('s-secure-line-val').className = 'qp-val';
-  } else {
-    show('s-secure-line', false);
+  let anchor = $('s-secure-line');
+  if (secUpgrade !== 'None' && secureTotalForDisplay > 0) {
+    anchor.insertAdjacentHTML('afterend',
+      `<div class="qp-row" id="s-secure-upgrade-line">
+         <span class="qp-label">SecureIT ${secUpgrade} Upgrade (${g.devices} devices)</span>
+         <span class="qp-val">${fmt(secureTotalForDisplay)}</span>
+       </div>`);
+    anchor = $('s-secure-upgrade-line');
+  }
+  if (overageUsers > 0) {
+    anchor.insertAdjacentHTML('afterend',
+      `<div class="qp-row" id="s-secure-overage-line">
+         <span class="qp-label">Additional SecureIT Users (${overageUsers} × $5.00)</span>
+         <span class="qp-val">${fmt(overageCost)}</span>
+       </div>`);
   }
 
   $('s-net-lines').innerHTML = net.items.map(i =>
@@ -1130,7 +1285,7 @@ function calcAugmentIT(g) {
   const augTotal   = discRate * tickets;
   const net        = calcNetwork('aug');
 
-  const secureCost = secPlan !== 'None' ? AUG_SECUREIT_RATES[secPlan] * g.seats : 0;
+  const secureCost = secPlan !== 'None' ? SECUREIT.standalone[secPlan] * g.seats : 0;
 
   show('aug-pentest-options', ptOn);
   const ptTier     = autoSelectPenTest('aug', g.totalUsers);
@@ -1143,8 +1298,11 @@ function calcAugmentIT(g) {
   // ── Summary ──
   show('s-manage-section', false);
   show('s-aug-section', true);
+  show('s-amp-section', false);
+  show('s-tier-row', true);
+  show('s-seats-row', true);
   set('s-solution', 'AugmentIT');
-  set('s-tier', currentHours);
+  set('s-tier', HOURS_LABEL[currentHours]);
   set('s-seats', `${g.seats} (${g.users} users / ${g.devices} devices)`);
   show('s-email-row', false);
   set('s-term', `${g.term} Year${g.term>1?'s':''}`);
@@ -1176,14 +1334,95 @@ function calcAugmentIT(g) {
   set('s-annual', fmt(annualTotal));
 }
 
+// AmplifyAI is published flat-rate pricing — the volume discount matrix and the
+// max(users, devices) seat model do not apply to it.
+function calcAmplifyAI(g) {
+  renderAmplifyPlans();
+
+  const tier = getRadio('amplify_plan') || 'None';
+  if (!ampUsersTouched) $('amp_users').value = g.users;
+  const users  = getNum('amp_users');
+  const agents = getNum('amp_agents');
+  const hours  = getNum('amp_fde_hours');
+
+  $('amp-agent-rate').textContent = `${fmt(AMPLIFY.Agent)}/agent/mo`;
+  $('amp-fde-rate').textContent   = `${fmt(AMPLIFY.FDE)}/hour`;
+  $('amp-users-hint').innerHTML   = ampUsersTouched
+    ? `Overriding the config bar (${g.users} users). <a href="#" onclick="resetAmpUsers();return false;">Follow config bar</a>`
+    : `Following the config-bar user count. Type here if only some users get AI.`;
+
+  let teamBase = 0, extraUsers = 0, extraCost = 0;
+  if (tier !== 'None') {
+    const st   = AMPLIFY.SuccessTeam[tier];
+    teamBase   = st.base;
+    extraUsers = Math.max(0, users - st.includedUsers);
+    extraCost  = extraUsers * st.perUser;
+    $('amp-team-hint').textContent = extraUsers > 0
+      ? `${fmt(st.base)} covers ${st.includedUsers} users + ${extraUsers} × ${fmt(st.perUser)} = ${fmt(teamBase + extraCost)}/mo`
+      : `${users} users within the first ${st.includedUsers} — ${fmt(st.base)}/mo`;
+  } else {
+    $('amp-team-hint').textContent = 'No Success Team selected — pricing agents and engineering only.';
+  }
+
+  const agentCost = agents * AMPLIFY.Agent;
+  const fdeCost   = hours  * AMPLIFY.FDE;
+
+  const monthlyTotal = teamBase + extraCost + agentCost + fdeCost;
+  const annualTotal  = monthlyTotal * 12;
+
+  // ── Summary ──
+  show('s-manage-section', false);
+  show('s-aug-section', false);
+  show('s-amp-section', true);
+  show('s-tier-row', false);
+  show('s-seats-row', false);
+  show('s-email-row', false);
+  set('s-solution', 'AmplifyAI');
+  set('s-term', `${g.term} Year${g.term>1?'s':''}`);
+  set('s-amp-users', users);
+
+  show('s-amp-team-line', tier !== 'None');
+  set('s-amp-team-lbl', `Success Team ${tier} (first ${tier !== 'None' ? AMPLIFY.SuccessTeam[tier].includedUsers : 0} users)`);
+  set('s-amp-team-val', fmt(teamBase));
+
+  show('s-amp-extra-line', extraUsers > 0);
+  if (extraUsers > 0) {
+    set('s-amp-extra-lbl', `Additional Users (${extraUsers} × ${fmt(AMPLIFY.SuccessTeam[tier].perUser)})`);
+    set('s-amp-extra-val', fmt(extraCost));
+  }
+
+  show('s-amp-agent-line', agents > 0);
+  if (agents > 0) {
+    set('s-amp-agent-lbl', `Managed Agents (${agents} × ${fmt(AMPLIFY.Agent)})`);
+    set('s-amp-agent-val', fmt(agentCost));
+  }
+
+  show('s-amp-fde-line', hours > 0);
+  if (hours > 0) {
+    set('s-amp-fde-lbl', `Forward Deployed Eng (${hours} hrs × ${fmt(AMPLIFY.FDE)})`);
+    set('s-amp-fde-val', fmt(fdeCost));
+  }
+
+  set('s-monthly', fmt(monthlyTotal));
+  set('s-annual', fmt(annualTotal));
+}
+
 // ═══════════════════════════════
 //  NAVIGATION
 // ═══════════════════════════════
+function syncHoursPills(locked, plan) {
+  ['8x5x5','5x8x5','24x7x365'].forEach(v =>
+    $('hr-'+v).classList.toggle('active', v === currentHours)
+  );
+  $('hours-pills').classList.toggle('locked', locked);
+  $('hours-hint').textContent =
+    activeSolution === 'manageit'  ? `Set by ManageIT ${plan}` :
+    activeSolution === 'amplifyai' ? 'Not used by AmplifyAI'   : '';
+}
+
 function setHours(h) {
   currentHours = h;
-  ['8x5x5','5x8x5','24x7x365'].forEach(v =>
-    $('hr-'+v).classList.toggle('active', v === h)
-  );
+  // recalc re-derives hours for the solutions that fix them, then repaints
   recalc();
 }
 
@@ -1230,25 +1469,15 @@ function copyQuote() {
 //  INIT
 // ═══════════════════════════════
 document.addEventListener('DOMContentLoaded', async () => {
+  let data = {};
   try {
     const res = await fetch('/api/pricing');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-
-    MANAGEIT         = data.ManageIT;
-    SECUREIT_RATES   = data.SecureIT;
-    AUG_SECUREIT_RATES = data.AugSecureIT;
-    AUGMENTIT        = data.AugmentIT;
-    NETWORK          = data.Network;
-    PENTEST          = data.PenTest;
-    // Restore Infinity for the last discount band (JSON serialises it as null)
-    DISCOUNTS        = data.Discounts.map(d => ({ ...d, max: d.max ?? Infinity }));
+    data = await res.json();
   } catch (e) {
-    console.error('Failed to load pricing config:', e);
-    document.body.innerHTML = '<div style="padding:40px;font-family:sans-serif;color:#c00;">' +
-      '<h2>Failed to load pricing data.</h2><p>Please refresh or contact support.</p></div>';
-    return;
+    console.error('Failed to load pricing config, using built-in defaults:', e);
   }
+  loadPricing(data);
 
   renderDiscountTable(0, 1);
   recalc();
