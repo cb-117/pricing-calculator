@@ -854,12 +854,14 @@
 // deploy land before the PricingConfig table is re-seeded: any row still in the
 // old (per-support-hour) shape is ignored in favour of the default below.
 const DEFAULT_PRICING = {
-  // Flat per-seat rate. Support hours are an attribute of the tier, not a
+  // Flat per-seat LIST rate. Support hours are an attribute of the tier, not a
   // price driver. Every tier includes a SecureIT tier at no extra cost.
+  // Targets are quoted on a 3-year commit at 0-50 users (3%), so list is
+  // grossed up by that discount: 105/0.97=108, 170/0.97=175, 250/0.97=258.
   ManageIT: {
-    Core: { rate: 105, hours: '8x5x5',    secureit: 'Core' },
-    Plus: { rate: 170, hours: '5x8x5',    secureit: 'Core' },
-    Pro:  { rate: 250, hours: '24x7x365', secureit: 'Plus' },
+    Core: { rate: 108, hours: '8x5x5',    secureit: 'Core' },
+    Plus: { rate: 175, hours: '5x8x5',    secureit: 'Core' },
+    Pro:  { rate: 258, hours: '24x7x365', secureit: 'Plus' },
     EmailOnly: { '8x5x5': 25, '5x8x5': 40, '24x7x365': 60 },
   },
   // bundled.Core is 0 because SecureIT Core ships with every ManageIT plan,

@@ -7,13 +7,20 @@ const KEY     = process.env.STORAGE_KEY;
 if (!KEY) { console.error('Set STORAGE_KEY env var'); process.exit(1); }
 
 const PRICING = {
-  // ManageIT is a flat per-seat rate. Support hours are an attribute of the
+  // ManageIT is a flat per-seat LIST rate. Support hours are an attribute of the
   // plan tier, not a price driver: Core = 8x5, Plus = extended 5x8, Pro = 24x7.
   // Every tier includes a SecureIT tier at no additional cost.
+  //
+  // Target pricing is quoted on a 3-year commitment at 0-50 users (3% volume
+  // discount), so list is grossed up by that discount and rounded to the dollar:
+  //   Core  105 / 0.97 = 108.25 -> 108  (3yr lands at 104.76)
+  //   Plus  170 / 0.97 = 175.26 -> 175  (3yr lands at 169.75)
+  //   Pro   250 / 0.97 = 257.73 -> 258  (3yr lands at 250.26)
+  // Bands above 50 users discount further off the same list.
   ManageIT: {
-    Core: { rate: 105, hours: '8x5x5',    secureit: 'Core' },
-    Plus: { rate: 170, hours: '5x8x5',    secureit: 'Core' },
-    Pro:  { rate: 250, hours: '24x7x365', secureit: 'Plus' },
+    Core: { rate: 108, hours: '8x5x5',    secureit: 'Core' },
+    Plus: { rate: 175, hours: '5x8x5',    secureit: 'Core' },
+    Pro:  { rate: 258, hours: '24x7x365', secureit: 'Plus' },
     EmailOnly: { '8x5x5': 25, '5x8x5': 40, '24x7x365': 60 },
   },
   // standalone = per device/month on its own.
