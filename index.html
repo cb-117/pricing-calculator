@@ -865,11 +865,12 @@ const DEFAULT_PRICING = {
     Pro:  { rate: 258, hours: '24x7x365', secureit: 'Plus' },
     EmailOnly: { '8x5x5': 25, '5x8x5': 40, '24x7x365': 60 },
   },
-  // bundled.Core is 0 because SecureIT Core ships with every ManageIT plan,
-  // so upgrading out of it is charged at the full bundled rate.
+  // An upgrade is the delta between two bundled rates: a plan including Core
+  // pays 50-25=25 to reach Plus, 90-25=65 to reach Pro; one including Plus
+  // pays 90-50=40 for Pro.
   SecureIT: {
     standalone: { Core: 30, Plus: 75, Pro: 125 },
-    bundled:    { Core: 0,  Plus: 50, Pro: 90  },
+    bundled:    { Core: 25, Plus: 50, Pro: 90  },
   },
   AmplifyAI: {
     SuccessTeam: {

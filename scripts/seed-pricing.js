@@ -25,12 +25,13 @@ const PRICING = {
     EmailOnly: { '8x5x5': 25, '5x8x5': 40, '24x7x365': 60 },
   },
   // standalone = per device/month on its own.
-  // bundled    = per device/month for a ManageIT customer. Core is 0 because
-  //              SecureIT Core is included with every ManageIT plan, so an
-  //              upgrade out of Core is charged at the full bundled rate.
+  // bundled    = per device/month for a ManageIT customer. An upgrade is
+  //              always the delta between two bundled rates, so a plan that
+  //              includes Core pays 50-25=25 to reach Plus and 90-25=65 to
+  //              reach Pro, and one that includes Plus pays 90-50=40 for Pro.
   SecureIT: {
-    standalone: { Core: 30, Plus: 75,  Pro: 125 },
-    bundled:    { Core: 0,  Plus: 50,  Pro: 90  },
+    standalone: { Core: 30, Plus: 75, Pro: 125 },
+    bundled:    { Core: 25, Plus: 50, Pro: 90  },
   },
   AmplifyAI: {
     SuccessTeam: {
