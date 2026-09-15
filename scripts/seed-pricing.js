@@ -12,19 +12,20 @@ const PRICING = {
   // Every tier includes a SecureIT tier at no additional cost.
   //
   // Target pricing is quoted on a 3-year commitment at 0-50 users (3% volume
-  // discount), so list is grossed up by that discount and rounded UP to the
-  // dollar, so a 3-year quote never lands under target:
-  //   target      / 0.97    list    quoted at 3yr
-  //   Core  105   108.25    109     106
-  //   Plus  180   185.57    186     181
-  //   Pro   250   257.73    258     251
-  // The quote rounds up a second time (see fmt/ceilD), which is why each
-  // lands a dollar over target. List of 108 / 185 / 257 would land exactly.
+  // discount). Because the quote itself rounds up (see fmt/ceilD), list is the
+  // whole-dollar figure whose 3-year quote lands exactly on target:
+  //   target   list   list x 0.97   quoted at 3yr
+  //   Core 105  108      104.76         105
+  //   Plus 180  185      179.45         180
+  //   Pro  250  257      249.29         250
   // Bands above 50 users discount further off the same list.
+  //
+  // minSeats is a floor, not a fee: a deal under it bills the minimum seat
+  // count at whatever rate applies, so 15 x 105 = the $1,575/mo Core minimum.
   ManageIT: {
-    Core: { rate: 109, hours: '8x5x5',    secureit: 'Core' },
-    Plus: { rate: 186, hours: '5x8x5',    secureit: 'Core' },
-    Pro:  { rate: 258, hours: '24x7x365', secureit: 'Plus' },
+    Core: { rate: 108, hours: '8x5x5',    secureit: 'Core', minSeats: 15 },
+    Plus: { rate: 185, hours: '5x8x5',    secureit: 'Core', minSeats: 25 },
+    Pro:  { rate: 257, hours: '24x7x365', secureit: 'Plus', minSeats: 25 },
     EmailOnly: { '8x5x5': 25, '5x8x5': 40, '24x7x365': 60 },
   },
   // standalone = per device/month on its own.
@@ -32,9 +33,12 @@ const PRICING = {
   //              always the delta between two bundled rates, so a plan that
   //              includes Core pays 50-25=25 to reach Plus and 90-25=65 to
   //              reach Pro, and one that includes Plus pays 90-50=40 for Pro.
+  // minDevices floors both a standalone SecureIT sale and a ManageIT upgrade
+  // delta: 25 x 75 = the $1,875/mo standalone Plus minimum.
   SecureIT: {
     standalone: { Core: 30, Plus: 75, Pro: 125 },
     bundled:    { Core: 25, Plus: 50, Pro: 90  },
+    minDevices: { Core: 15, Plus: 25, Pro: 25  },
   },
   AmplifyAI: {
     SuccessTeam: {

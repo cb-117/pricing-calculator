@@ -856,21 +856,25 @@
 const DEFAULT_PRICING = {
   // Flat per-seat LIST rate. Support hours are an attribute of the tier, not a
   // price driver. Every tier includes a SecureIT tier at no extra cost.
-  // Targets are quoted on a 3-year commit at 0-50 users (3%), so list is
-  // grossed up by that discount and rounded UP, so a 3-year quote never lands
-  // under target: 105/0.97->109, 180/0.97->186, 250/0.97->258.
+  // Targets are quoted on a 3-year commit at 0-50 users (3%). Since the quote
+  // rounds up (fmt/ceilD), list is the whole dollar whose 3-year quote lands
+  // exactly on target: 108->105, 185->180, 257->250.
+  // minSeats is a floor: a deal under it bills the minimum seat count at
+  // whatever rate applies (15 x 105 = the $1,575/mo Core minimum).
   ManageIT: {
-    Core: { rate: 109, hours: '8x5x5',    secureit: 'Core' },
-    Plus: { rate: 186, hours: '5x8x5',    secureit: 'Core' },
-    Pro:  { rate: 258, hours: '24x7x365', secureit: 'Plus' },
+    Core: { rate: 108, hours: '8x5x5',    secureit: 'Core', minSeats: 15 },
+    Plus: { rate: 185, hours: '5x8x5',    secureit: 'Core', minSeats: 25 },
+    Pro:  { rate: 257, hours: '24x7x365', secureit: 'Plus', minSeats: 25 },
     EmailOnly: { '8x5x5': 25, '5x8x5': 40, '24x7x365': 60 },
   },
   // An upgrade is the delta between two bundled rates: a plan including Core
   // pays 50-25=25 to reach Plus, 90-25=65 to reach Pro; one including Plus
   // pays 90-50=40 for Pro.
+  // minDevices floors a standalone SecureIT sale and a ManageIT upgrade delta.
   SecureIT: {
     standalone: { Core: 30, Plus: 75, Pro: 125 },
     bundled:    { Core: 25, Plus: 50, Pro: 90  },
+    minDevices: { Core: 15, Plus: 25, Pro: 25  },
   },
   AmplifyAI: {
     SuccessTeam: {
@@ -917,8 +921,8 @@ function pickRow(data, key, isValid) {
 }
 
 function loadPricing(data) {
-  MANAGEIT  = pickRow(data, 'ManageIT',  r => PLANS.every(p => r[p] && typeof r[p].rate === 'number') && r.EmailOnly);
-  SECUREIT  = pickRow(data, 'SecureIT',  r => r.standalone && r.bundled);
+  MANAGEIT  = pickRow(data, 'ManageIT',  r => PLANS.every(p => r[p] && typeof r[p].rate === 'number' && typeof r[p].minSeats === 'number') && r.EmailOnly);
+  SECUREIT  = pickRow(data, 'SecureIT',  r => r.standalone && r.bundled && r.minDevices);
   AMPLIFY   = pickRow(data, 'AmplifyAI', r => r.SuccessTeam && typeof r.FDE === 'number');
   AUGMENTIT = pickRow(data, 'AugmentIT', r => typeof r['8x5x5'] === 'number');
   NETWORK   = pickRow(data, 'Network',   r => typeof r.firewall === 'number');
@@ -971,6 +975,7 @@ function autoSelectPenTest(prefix, totalUsers) {
 // Support hours and the included SecureIT tier are attributes of the ManageIT
 // plan, not separate price drivers.
 const planHours    = plan => MANAGEIT[plan].hours;
+const minSeatsOf   = plan => MANAGEIT[plan].minSeats;
 const planSecureIT = plan => MANAGEIT[plan].secureit;
 
 function onPlanChange(plan) {
@@ -988,7 +993,7 @@ function renderManageITPlans() {
       <div class="rc-label">
         <div class="rc-title">${n}</div>
         <div class="rc-price">${fmt(t.rate)}/seat/mo</div>
-        <div class="rc-meta">${HOURS_LABEL[t.hours]}<br/>SecureIT ${t.secureit} included</div>
+        <div class="rc-meta">${HOURS_LABEL[t.hours]}<br/>SecureIT ${t.secureit} included<br/>Min ${t.minSeats} seats</div>
       </div>
     </label>`;
   }).join('');
@@ -1031,6 +1036,7 @@ function renderSecureITPlans(managePlan) {
       <div class="rc-label">
         <div class="rc-title">${o.label}</div>
         <div class="rc-price">${o.price ? '+'+fmt(o.price)+'/device' : 'Keep bundled'}</div>
+        ${o.price ? `<div class="rc-meta">Min ${SECUREIT.minDevices[o.v]} devices</div>` : ''}
       </div>
     </label>`).join('');
 }
@@ -1047,6 +1053,7 @@ function renderAugSecureIT() {
       <div class="rc-label">
         <div class="rc-title">${o.label}</div>
         <div class="rc-price">${o.price ? fmt(o.price)+'/seat' : 'No add-on'}</div>
+        ${o.price ? `<div class="rc-meta">Min ${SECUREIT.minDevices[o.v]} devices</div>` : ''}
       </div>
     </label>`).join('');
 }
@@ -1155,6 +1162,10 @@ function recalc() {
   const g = getGlobal();
   const rate      = MANAGEIT[plan].rate;
   const emailRate = MANAGEIT.EmailOnly[planHours(plan)];
+  // Plan minimums are a seat floor, not a flat fee: a deal under the minimum
+  // bills the floor count at whatever term/volume rate applies.
+  const minSeats    = minSeatsOf(plan);
+  const billedSeats = Math.max(g.seats, minSeats);
 
   // Update config bar
   const driven = g.devices >= g.users ? 'Driven by devices' : 'Driven by users';
@@ -1163,40 +1174,47 @@ function recalc() {
   renderDiscountTable(g.discRow, g.term);
 
   // Update ManageIT plan seat hint
-  $('mi-seat-hint').textContent =
-    `${g.seats} seats × ${fmt(rate)} = ${fmt(rate * g.seats)} (before discount)`;
+  $('mi-seat-hint').textContent = billedSeats > g.seats
+    ? `${g.seats} seats is under the ${minSeats}-seat minimum — billing ${billedSeats} × ${fmt(rate)} = ${fmt(rate * billedSeats)} (before discount)`
+    : `${billedSeats} seats × ${fmt(rate)} = ${fmt(rate * billedSeats)} (before discount)`;
   $('email-only-info').textContent =
     g.emailOnly > 0
       ? `${g.emailOnly} email-only users × ${fmt(emailRate)}/user = ${fmt(emailRate * g.emailOnly)}/mo (not discounted)`
       : `Email-only users are billed at the ManageIT ${plan} support level ($${emailRate}/user at ${HOURS_LABEL[planHours(plan)]}).`;
 
-  if (activeSolution === 'manageit')      calcManageIT(g, rate, emailRate, plan);
+  if (activeSolution === 'manageit')      calcManageIT(g, rate, emailRate, plan, billedSeats);
   else if (activeSolution === 'augmentit') calcAugmentIT(g);
   else                                     calcAmplifyAI(g);
 }
 
-function calcManageIT(g, rate, emailRate, plan) {
+function calcManageIT(g, rate, emailRate, plan, billedSeats) {
   const secUpgrade = getRadio('secureit_plan') || 'None'; // 'None' or upgrade tier
   const ptOn    = $('mi_pentest_enabled').checked;
 
   const baseRate     = rate;
   const discRate     = ceilD(baseRate * g.mult);   // whole dollars per seat
-  const manageTotal  = discRate * g.seats;
+  const manageTotal  = discRate * billedSeats;
+  const seatsFloored = billedSeats > g.seats;
   const emailCost    = emailRate * g.emailOnly;  // email-only not discounted
 
   const bundled      = planSecureIT(plan);       // 'Core' or 'Plus' — always included
   const bundledLabel = `SecureIT ${bundled} (included w/ ${plan})`;
 
-  // SecureIT is priced per device; overage = extra users × $5 only when effective SecureIT tier is Plus or Pro
+  // SecureIT is priced per device. An upgrade carries its own device floor;
+  // the bundled tier does not, so overage is measured against what is billed.
   const effectiveSecTier = secUpgrade !== 'None' ? secUpgrade : bundled;
-  const overageUsers = (effectiveSecTier === 'Plus' || effectiveSecTier === 'Pro') ? Math.max(0, g.users - g.devices) : 0;
+  const secMinDevices  = secUpgrade !== 'None' ? SECUREIT.minDevices[secUpgrade] : 0;
+  const billedDevices  = Math.max(g.devices, secMinDevices);
+  const devicesFloored = billedDevices > g.devices;
+  // overage = extra users x $5 only when the effective SecureIT tier is Plus or Pro
+  const overageUsers = (effectiveSecTier === 'Plus' || effectiveSecTier === 'Pro') ? Math.max(0, g.users - billedDevices) : 0;
   const overageCost  = overageUsers * 5;
 
   // Upgrade cost = delta above bundled tier, billed per device
   let secureUpgradeCost = 0;
   const showSeats = secUpgrade !== 'None';
   if (secUpgrade !== 'None') {
-    secureUpgradeCost = secureUpgradeRate(bundled, secUpgrade) * g.devices;
+    secureUpgradeCost = secureUpgradeRate(bundled, secUpgrade) * billedDevices;
   }
   const secureTotalForDisplay = secureUpgradeCost;
   show('secureit-seats-block', showSeats);
@@ -1227,7 +1245,7 @@ function calcManageIT(g, rate, emailRate, plan) {
   set('s-base-price', fmt(baseRate));
   set('s-vol-disc', fmtPct(g.discPct));
   set('s-disc-price', fmt(discRate));
-  set('s-manage-main-lbl', `ManageIT ${plan} (${g.seats} seats)`);
+  set('s-manage-main-lbl', `ManageIT ${plan} (${billedSeats} seats${seatsFloored ? ` · ${minSeatsOf(plan)} min` : ''})`);
   set('s-manage-main', fmt(manageTotal));
   show('s-email-line', g.emailOnly > 0);
   set('s-email-line-lbl', `Email-Only (${g.emailOnly} × ${fmt(emailRate)})`);
@@ -1251,7 +1269,7 @@ function calcManageIT(g, rate, emailRate, plan) {
   if (secUpgrade !== 'None' && secureTotalForDisplay > 0) {
     anchor.insertAdjacentHTML('afterend',
       `<div class="qp-row" id="s-secure-upgrade-line">
-         <span class="qp-label">SecureIT ${secUpgrade} Upgrade (${g.devices} devices)</span>
+         <span class="qp-label">SecureIT ${secUpgrade} Upgrade (${billedDevices} devices${devicesFloored ? ` · ${secMinDevices} min` : ''})</span>
          <span class="qp-val">${fmt(secureTotalForDisplay)}</span>
        </div>`);
     anchor = $('s-secure-upgrade-line');
@@ -1290,7 +1308,9 @@ function calcAugmentIT(g) {
   const augTotal   = discRate * tickets;
   const net        = calcNetwork('aug');
 
-  const secureCost = secPlan !== 'None' ? SECUREIT.standalone[secPlan] * g.seats : 0;
+  const secMin     = secPlan !== 'None' ? SECUREIT.minDevices[secPlan] : 0;
+  const secBilled  = Math.max(g.seats, secMin);
+  const secureCost = secPlan !== 'None' ? SECUREIT.standalone[secPlan] * secBilled : 0;
 
   show('aug-pentest-options', ptOn);
   const ptTier     = autoSelectPenTest('aug', g.totalUsers);
@@ -1320,7 +1340,7 @@ function calcAugmentIT(g) {
 
   if (secPlan !== 'None') {
     show('s-aug-secure-line', true);
-    set('s-aug-secure-lbl', `SecureIT ${secPlan} (${g.seats} seats)`);
+    set('s-aug-secure-lbl', `SecureIT ${secPlan} (${secBilled} seats${secBilled > g.seats ? ` · ${secMin} min` : ''})`);
     set('s-aug-secure-val', fmt(secureCost));
   } else {
     show('s-aug-secure-line', false);
