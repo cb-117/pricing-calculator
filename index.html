@@ -858,10 +858,10 @@ const DEFAULT_PRICING = {
   // price driver. Every tier includes a SecureIT tier at no extra cost.
   // Targets are quoted on a 3-year commit at 0-50 users (3%), so list is
   // grossed up by that discount and rounded UP, so a 3-year quote never lands
-  // under target: 105/0.97->109, 170/0.97->176, 250/0.97->258.
+  // under target: 105/0.97->109, 180/0.97->186, 250/0.97->258.
   ManageIT: {
     Core: { rate: 109, hours: '8x5x5',    secureit: 'Core' },
-    Plus: { rate: 176, hours: '5x8x5',    secureit: 'Core' },
+    Plus: { rate: 186, hours: '5x8x5',    secureit: 'Core' },
     Pro:  { rate: 258, hours: '24x7x365', secureit: 'Plus' },
     EmailOnly: { '8x5x5': 25, '5x8x5': 40, '24x7x365': 60 },
   },

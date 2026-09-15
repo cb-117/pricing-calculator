@@ -14,13 +14,16 @@ const PRICING = {
   // Target pricing is quoted on a 3-year commitment at 0-50 users (3% volume
   // discount), so list is grossed up by that discount and rounded UP to the
   // dollar, so a 3-year quote never lands under target:
-  //   Core  105 / 0.97 = 108.25 -> 109  (3yr lands at 105.73)
-  //   Plus  170 / 0.97 = 175.26 -> 176  (3yr lands at 170.72)
-  //   Pro   250 / 0.97 = 257.73 -> 258  (3yr lands at 250.26)
+  //   target      / 0.97    list    quoted at 3yr
+  //   Core  105   108.25    109     106
+  //   Plus  180   185.57    186     181
+  //   Pro   250   257.73    258     251
+  // The quote rounds up a second time (see fmt/ceilD), which is why each
+  // lands a dollar over target. List of 108 / 185 / 257 would land exactly.
   // Bands above 50 users discount further off the same list.
   ManageIT: {
     Core: { rate: 109, hours: '8x5x5',    secureit: 'Core' },
-    Plus: { rate: 176, hours: '5x8x5',    secureit: 'Core' },
+    Plus: { rate: 186, hours: '5x8x5',    secureit: 'Core' },
     Pro:  { rate: 258, hours: '24x7x365', secureit: 'Plus' },
     EmailOnly: { '8x5x5': 25, '5x8x5': 40, '24x7x365': 60 },
   },
